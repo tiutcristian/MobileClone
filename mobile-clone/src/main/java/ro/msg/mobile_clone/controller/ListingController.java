@@ -10,7 +10,7 @@ import ro.msg.mobile_clone.service.ListingService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/listings")
+@RequestMapping("/api/v1/listings")
 @AllArgsConstructor
 public class ListingController {
 
@@ -44,6 +44,6 @@ public class ListingController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteListing(@PathVariable Long id) {
         listingService.deleteListing(id);
-        return ResponseEntity.ok("Listing deleted successfully");
+        return ResponseEntity.ok().build();
     }
 }

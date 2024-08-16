@@ -1,6 +1,8 @@
 package ro.msg.mobile_clone.mapper;
 
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import ro.msg.mobile_clone.dto.ListingDto;
 import ro.msg.mobile_clone.entity.Listing;
@@ -14,41 +16,41 @@ public class ListingMapper {
     private UserRepository userRepository;
 
 
-    public Listing mapToListing(ListingDto listingDto) {
-        User foundUser = userRepository.findById(listingDto.getUserId())
+    public Listing mapToListing(@NotNull ListingDto listingDto) {
+        User foundUser = userRepository.findById(listingDto.userId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return Listing.builder()
-                .id(listingDto.getId())
-                .user(foundUser)
-                .title(listingDto.getTitle())
-                .price(listingDto.getPrice())
-                .make(listingDto.getMake())
-                .model(listingDto.getModel())
-                .description(listingDto.getDescription())
-                .year(listingDto.getYear())
-                .mileage(listingDto.getMileage())
-                .engineSize(listingDto.getEngineSize())
-                .horsepower(listingDto.getHorsepower())
-                .transmission(listingDto.getTransmission())
-                .fuelType(listingDto.getFuelType())
-                .build();
+        Listing listing = new Listing();
+        listing.setUser(foundUser);
+        listing.setTitle(listingDto.title());
+        listing.setPrice(listingDto.price());
+        listing.setMake(listingDto.make());
+        listing.setModel(listingDto.model());
+        listing.setDescription(listingDto.description());
+        listing.setYear(listingDto.year());
+        listing.setMileage(listingDto.mileage());
+        listing.setEngineSize(listingDto.engineSize());
+        listing.setHorsepower(listingDto.horsepower());
+        listing.setTransmission(listingDto.transmission());
+        listing.setFuelType(listingDto.fuelType());
+        return listing;
     }
 
-    public static ListingDto mapToListingDto(Listing listing) {
-        return ListingDto.builder()
-                .id(listing.getId())
-                .userId(listing.getUser().getId())
-                .title(listing.getTitle())
-                .price(listing.getPrice())
-                .make(listing.getMake())
-                .model(listing.getModel())
-                .description(listing.getDescription())
-                .year(listing.getYear())
-                .mileage(listing.getMileage())
-                .engineSize(listing.getEngineSize())
-                .horsepower(listing.getHorsepower())
-                .transmission(listing.getTransmission())
-                .fuelType(listing.getFuelType())
-                .build();
+    @Contract("_ -> new")
+    public static @NotNull ListingDto mapToListingDto(@NotNull Listing listing) {
+        return new ListingDto(
+                listing.getId(),
+                listing.getUser().getId(),
+                listing.getTitle(),
+                listing.getPrice(),
+                listing.getMake(),
+                listing.getModel(),
+                listing.getDescription(),
+                listing.getYear(),
+                listing.getMileage(),
+                listing.getEngineSize(),
+                listing.getHorsepower(),
+                listing.getTransmission(),
+                listing.getFuelType()
+        );
     }
 }

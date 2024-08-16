@@ -1,6 +1,8 @@
 package ro.msg.mobile_clone.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ro.msg.mobile_clone.dto.UserDto;
@@ -13,7 +15,8 @@ import ro.msg.mobile_clone.validator.UserValidator;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@Transactional
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;

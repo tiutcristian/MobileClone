@@ -11,7 +11,7 @@ import ro.msg.mobile_clone.service.UserService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @AllArgsConstructor
 public class UserController {
 
@@ -26,7 +26,7 @@ public class UserController {
 
 
     @PostMapping("/create")
-    public Object addUser(@RequestBody UserDto userDto) throws Exception {
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) throws Exception {
         return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
     }
 
@@ -47,6 +47,6 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         listingService.deleteListingsByUserId(id);
         userService.deleteUser(id);
-        return ResponseEntity.ok("User and all the associated listings deleted successfully");
+        return ResponseEntity.ok().build();
     }
 }

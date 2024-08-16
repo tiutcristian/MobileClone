@@ -1,18 +1,15 @@
 package ro.msg.mobile_clone.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.Year;
 
 @Entity
-@Table(name = "listings")
-@Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Listing {
 
     public enum Transmission {MANUAL, AUTOMATIC}
@@ -20,6 +17,8 @@ public class Listing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @ManyToOne
@@ -40,14 +39,14 @@ public class Listing {
 
     private int mileage;
 
-    @Column(name = "engine_size")
     private int engineSize;
 
     private int horsepower;
 
+    @Enumerated(EnumType.STRING)
     private Transmission transmission;
 
-    @Column(name = "fuel_type")
+    @Enumerated(EnumType.STRING)
     private FuelType fuelType;
 
 }
