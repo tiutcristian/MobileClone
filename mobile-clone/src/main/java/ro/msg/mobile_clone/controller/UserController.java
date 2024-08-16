@@ -26,7 +26,7 @@ public class UserController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
+    public Object addUser(@RequestBody UserDto userDto) throws Exception {
         return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
     }
 
@@ -38,7 +38,7 @@ public class UserController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) throws Exception {
         return ResponseEntity.ok(userService.updateUser(id, userDto));
     }
 
