@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface ListingService {
 
-    ListingDto createListing(ListingDto listingDto);
+    ListingDto createListing(ListingDto listingDto) throws Exception;
 
     ListingDto getListingById(Long id);
 
     List<ListingDto> getAllListings();
 
-    ListingDto updateListing(Long id, ListingDto listingDto);
+    ListingDto updateListing(Long id, ListingDto listingDto) throws Exception;
 
     void deleteListing(Long id);
 

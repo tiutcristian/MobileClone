@@ -24,7 +24,7 @@ public class ListingController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<ListingDto> addListing(@RequestBody ListingDto listingDto) {
+    public ResponseEntity<ListingDto> addListing(@RequestBody ListingDto listingDto) throws Exception {
         return new ResponseEntity<>(listingService.createListing(listingDto), HttpStatus.CREATED);
     }
 
@@ -36,7 +36,7 @@ public class ListingController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<ListingDto> updateListing(@PathVariable Long id, @RequestBody ListingDto listingDto) {
+    public ResponseEntity<ListingDto> updateListing(@PathVariable Long id, @RequestBody ListingDto listingDto) throws Exception {
         return ResponseEntity.ok(listingService.updateListing(id, listingDto));
     }
 
