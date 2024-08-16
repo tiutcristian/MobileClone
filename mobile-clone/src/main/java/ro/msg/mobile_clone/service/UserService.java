@@ -1,8 +1,6 @@
 package ro.msg.mobile_clone.service;
 
-
 import ro.msg.mobile_clone.dto.UserDto;
-import ro.msg.mobile_clone.repository.UserRepository;
 
 import java.util.List;
 
