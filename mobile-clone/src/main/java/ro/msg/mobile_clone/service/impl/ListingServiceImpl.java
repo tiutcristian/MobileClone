@@ -91,4 +91,12 @@ public class ListingServiceImpl implements ListingService {
                 .orElseThrow(() -> new RuntimeException("Listing not found"));
         listingRepository.delete(listing);
     }
+
+    @Override
+    public void deleteListingsByUserId(Long userId) {
+        List<Listing> listings = listingRepository.findAll().stream()
+                .filter(listing -> listing.getUser().getId().equals(userId))
+                .toList();
+        listingRepository.deleteAll(listings);
+    }
 }
