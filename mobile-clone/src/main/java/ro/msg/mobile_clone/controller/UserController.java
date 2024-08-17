@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ro.msg.mobile_clone.dto.UserDto;
+import ro.msg.mobile_clone.entity.User;
+import ro.msg.mobile_clone.mapper.UserMapper;
 import ro.msg.mobile_clone.service.ListingService;
 import ro.msg.mobile_clone.service.UserService;
 
@@ -21,25 +23,36 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+        List<User> users = userService.getAllUsers();
+        List<UserDto> userDtos = users.stream()
+                .map(UserMapper::mapToUserDto)
+                .toList();
+        return ResponseEntity.ok(userDtos);
     }
 
 
     @PostMapping("/create")
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) throws Exception {
-        return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
+        User newUser = UserMapper.mapToUser(userDto);
+        User savedUser = userService.createUser(newUser);
+        UserDto savedUserDto = UserMapper.mapToUserDto(savedUser);
+        return new ResponseEntity<>(savedUserDto, HttpStatus.CREATED);
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+        User user = userService.getUserById(id);
+        UserDto userDto = UserMapper.mapToUserDto(user);
+        return ResponseEntity.ok(userDto);
     }
 
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) throws Exception {
-        return ResponseEntity.ok(userService.updateUser(id, userDto));
+        User user = UserMapper.mapToUser(userDto);
+        userService.updateUser(id, user);
+        return ResponseEntity.ok().build();
     }
 
 
