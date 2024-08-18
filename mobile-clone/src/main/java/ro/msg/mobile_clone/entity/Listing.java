@@ -2,6 +2,8 @@ package ro.msg.mobile_clone.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ro.msg.mobile_clone.enums.FuelType;
+import ro.msg.mobile_clone.enums.Transmission;
 
 import java.time.Year;
 
@@ -11,9 +13,6 @@ import java.time.Year;
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Listing {
-
-    public enum Transmission {MANUAL, AUTOMATIC}
-    public enum FuelType {PETROL, DIESEL, ELECTRIC, HYBRID}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
