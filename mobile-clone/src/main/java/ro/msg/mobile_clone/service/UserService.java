@@ -35,7 +35,7 @@ public class UserService {
     }
 
 
-    public void updateUser(Long id, @NotNull User userDto) throws Exception {
+    public User updateUser(Long id, @NotNull User userDto) throws Exception {
         User user = userRepository
                 .findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -47,7 +47,7 @@ public class UserService {
 
         userValidator.validate(user);
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
 

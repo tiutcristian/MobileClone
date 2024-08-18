@@ -35,7 +35,7 @@ public class ListingService {
     }
 
 
-    public void updateListing(Long id, @NotNull Listing l) throws Exception {
+    public Listing updateListing(Long id, @NotNull Listing l) throws Exception {
         Listing listing = listingRepository
                 .findById(id)
                 .orElseThrow(() -> new RuntimeException("Listing not found"));
@@ -55,7 +55,7 @@ public class ListingService {
 
         listingValidator.validate(listing);
 
-        listingRepository.save(listing);
+        return listingRepository.save(listing);
     }
 
 

@@ -1,15 +1,18 @@
 package ro.msg.mobile_clone.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ro.msg.mobile_clone.dto.UserDto;
 import ro.msg.mobile_clone.entity.User;
 import ro.msg.mobile_clone.mapper.UserMapper;
 import ro.msg.mobile_clone.service.ListingService;
 import ro.msg.mobile_clone.service.UserService;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -23,43 +26,73 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
+
         List<User> users = userService.getAllUsers();
-        List<UserDto> userDtos = users.stream()
+
+        List<UserDto> userDTOs = users.stream()
                 .map(UserMapper::mapToUserDto)
                 .toList();
-        return ResponseEntity.ok(userDtos);
+
+        return ResponseEntity.ok(userDTOs);
     }
 
 
     @PostMapping("/create")
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) throws Exception {
+
         User newUser = UserMapper.mapToUser(userDto);
         User savedUser = userService.createUser(newUser);
         UserDto savedUserDto = UserMapper.mapToUserDto(savedUser);
-        return new ResponseEntity<>(savedUserDto, HttpStatus.CREATED);
+
+        String currentPath = ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .toUriString();
+
+        String targetPath = currentPath.replace("/create", "/{id}");
+
+        URI location = ServletUriComponentsBuilder
+                .fromUriString(targetPath)
+                .buildAndExpand(savedUserDto.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(savedUserDto);
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+
         User user = userService.getUserById(id);
         UserDto userDto = UserMapper.mapToUserDto(user);
+
         return ResponseEntity.ok(userDto);
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) throws Exception {
+    public ResponseEntity<Void> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) throws Exception {
+
         User user = UserMapper.mapToUser(userDto);
-        userService.updateUser(id, user);
-        return ResponseEntity.ok().build();
+        User updatedUser = userService.updateUser(id, user);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .buildAndExpand(updatedUser.getId())
+                .toUri();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(location);
+
+        return new ResponseEntity<>(headers, HttpStatus.OK);
     }
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+
         listingService.deleteListingsByUserId(id);
         userService.deleteUser(id);
+
         return ResponseEntity.ok().build();
     }
 }
