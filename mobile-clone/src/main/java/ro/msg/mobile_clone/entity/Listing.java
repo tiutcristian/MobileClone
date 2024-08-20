@@ -8,6 +8,7 @@ import ro.msg.mobile_clone.enums.Transmission;
 import java.time.Year;
 
 @Entity
+@Table(name = "listings")
 @NoArgsConstructor
 @Getter
 @Setter

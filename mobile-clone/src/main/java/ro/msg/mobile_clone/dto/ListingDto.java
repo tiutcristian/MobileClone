@@ -1,6 +1,8 @@
 package ro.msg.mobile_clone.dto;
 
-import ro.msg.mobile_clone.entity.Listing;
+import ro.msg.mobile_clone.enums.FuelType;
+import ro.msg.mobile_clone.enums.Transmission;
+
 import java.time.Year;
 
 public record ListingDto (
@@ -15,6 +17,6 @@ public record ListingDto (
     int mileage,
     int engineSize,
     int horsepower,
-    Listing.Transmission transmission,
-    Listing.FuelType fuelType
+    Transmission transmission,
+    FuelType fuelType
 ) {}
