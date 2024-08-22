@@ -10,6 +10,7 @@ import ro.msg.mobile_clone.dto.ListingDto;
 import ro.msg.mobile_clone.entity.Listing;
 import ro.msg.mobile_clone.mapper.ListingMapper;
 import ro.msg.mobile_clone.service.ListingService;
+import ro.msg.mobile_clone.service.UserService;
 
 import java.net.URI;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
 public class ListingController {
 
     private ListingService listingService;
-    private ListingMapper listingMapper;
+    private UserService userService;
 
 
     @GetMapping
@@ -29,7 +30,7 @@ public class ListingController {
         List<Listing> listings = listingService.getAllListings();
 
         List<ListingDto> listingDTOs = listings.stream()
-                .map(ListingMapper::mapToListingDto)
+                .map(ListingMapper.INSTANCE::mapToListingDto)
                 .toList();
 
         return ResponseEntity.ok(listingDTOs);
@@ -39,9 +40,9 @@ public class ListingController {
     @PostMapping("/create")
     public ResponseEntity<ListingDto> addListing(@RequestBody ListingDto listingDto) throws Exception {
 
-        Listing newListing = listingMapper.mapToListing(listingDto);
+        Listing newListing = ListingMapper.INSTANCE.mapToListing(listingDto, userService);
         Listing savedListing = listingService.createListing(newListing);
-        ListingDto savedListingDto = ListingMapper.mapToListingDto(savedListing);
+        ListingDto savedListingDto = ListingMapper.INSTANCE.mapToListingDto(savedListing);
 
         String currentPath = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
@@ -62,7 +63,7 @@ public class ListingController {
     public ResponseEntity<ListingDto> getListingById(@PathVariable Long id) {
 
         Listing listing = listingService.getListingById(id);
-        ListingDto listingDto = ListingMapper.mapToListingDto(listing);
+        ListingDto listingDto = ListingMapper.INSTANCE.mapToListingDto(listing);
 
         return ResponseEntity.ok(listingDto);
     }
@@ -71,7 +72,7 @@ public class ListingController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateListing(@PathVariable Long id, @RequestBody ListingDto listingDto) throws Exception {
 
-        Listing listing = listingMapper.mapToListing(listingDto);
+        Listing listing = ListingMapper.INSTANCE.mapToListing(listingDto, userService);
         Listing updatedListing = listingService.updateListing(id, listing);
 
         URI location = ServletUriComponentsBuilder
