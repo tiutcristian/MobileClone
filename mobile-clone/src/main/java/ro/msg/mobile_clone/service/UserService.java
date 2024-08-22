@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ro.msg.mobile_clone.entity.User;
 import ro.msg.mobile_clone.repository.UserRepository;
-import ro.msg.mobile_clone.validator.UserValidator;
 
 import java.util.List;
 
@@ -14,11 +13,9 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserValidator userValidator;
 
 
     public User createUser(User u) throws Exception {
-        userValidator.validate(u);
         return userRepository.save(u);
     }
 
@@ -44,8 +41,6 @@ public class UserService {
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         user.setPhone(userDto.getPhone());
-
-        userValidator.validate(user);
 
         return userRepository.save(user);
     }
