@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import ro.msg.mobile_clone.converters.LowercaseConverter;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
@@ -37,4 +39,7 @@ public class User {
     @NotBlank(message = "Phone is mandatory")
     @Column(unique = true)
     private String phone;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Listing> listings;
 }

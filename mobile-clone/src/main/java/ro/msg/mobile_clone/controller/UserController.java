@@ -9,7 +9,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ro.msg.mobile_clone.dto.UserDto;
 import ro.msg.mobile_clone.entity.User;
 import ro.msg.mobile_clone.mapper.UserMapper;
-import ro.msg.mobile_clone.service.ListingService;
 import ro.msg.mobile_clone.service.UserService;
 
 import java.net.URI;
@@ -21,7 +20,6 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final ListingService listingService;
 
 
     @GetMapping
@@ -90,7 +88,6 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
 
-        listingService.deleteListingsByUserId(id);
         userService.deleteUser(id);
 
         return ResponseEntity.ok().build();
