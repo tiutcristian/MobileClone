@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ro.msg.mobile_clone.entity.User;
+import ro.msg.mobile_clone.exceptions.UserNotFoundException;
 import ro.msg.mobile_clone.repository.UserRepository;
 
 import java.util.List;
@@ -15,15 +16,15 @@ public class UserService {
     private final UserRepository userRepository;
 
 
-    public User createUser(User u) throws Exception {
+    public User createUser(User u) {
         return userRepository.save(u);
     }
 
 
-    public User getUserById(Long id) {
+    public User getUserById(Long id) throws UserNotFoundException {
         return userRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
     }
 
 
@@ -32,10 +33,10 @@ public class UserService {
     }
 
 
-    public User updateUser(Long id, @NotNull User userDto) throws Exception {
+    public User updateUser(Long id, @NotNull User userDto) throws UserNotFoundException {
         User user = userRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
 
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
@@ -46,10 +47,10 @@ public class UserService {
     }
 
 
-    public void deleteUser(Long id) {
+    public void deleteUser(Long id) throws UserNotFoundException {
         User user = userRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
 
         userRepository.delete(user);
     }

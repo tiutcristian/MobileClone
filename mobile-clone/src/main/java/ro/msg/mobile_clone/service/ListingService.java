@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ro.msg.mobile_clone.entity.Listing;
+import ro.msg.mobile_clone.exceptions.ListingNotFoundException;
 import ro.msg.mobile_clone.repository.ListingRepository;
 
 import java.util.List;
@@ -15,15 +16,15 @@ public class ListingService {
     private final ListingRepository listingRepository;
 
 
-    public Listing createListing(Listing l) throws Exception {
+    public Listing createListing(Listing l) {
         return listingRepository.save(l);
     }
 
 
-    public Listing getListingById(Long id) {
+    public Listing getListingById(Long id) throws ListingNotFoundException {
         return listingRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Listing not found"));
+                .orElseThrow(ListingNotFoundException::new);
     }
 
 
@@ -32,10 +33,10 @@ public class ListingService {
     }
 
 
-    public Listing updateListing(Long id, @NotNull Listing l) throws Exception {
+    public Listing updateListing(Long id, @NotNull Listing l) throws ListingNotFoundException {
         Listing listing = listingRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Listing not found"));
+                .orElseThrow(ListingNotFoundException::new);
 
         listing.setUser(l.getUser());
         listing.setTitle(l.getTitle());
@@ -54,22 +55,12 @@ public class ListingService {
     }
 
 
-    public void deleteListing(Long id) {
+    public void deleteListing(Long id) throws ListingNotFoundException {
 
         Listing listing = listingRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Listing not found"));
+                .orElseThrow(ListingNotFoundException::new);
 
         listingRepository.delete(listing);
-    }
-
-
-    public void deleteListingsByUserId(Long userId) {
-
-        List<Listing> listings = listingRepository.findAll().stream()
-                .filter(listing -> listing.getUser().getId().equals(userId))
-                .toList();
-
-        listingRepository.deleteAll(listings);
     }
 }
