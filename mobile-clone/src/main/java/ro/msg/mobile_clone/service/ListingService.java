@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ro.msg.mobile_clone.entity.Listing;
 import ro.msg.mobile_clone.repository.ListingRepository;
-import ro.msg.mobile_clone.validator.ListingValidator;
 
 import java.util.List;
 
@@ -14,11 +13,9 @@ import java.util.List;
 public class ListingService {
 
     private final ListingRepository listingRepository;
-    private final ListingValidator listingValidator;
 
 
     public Listing createListing(Listing l) throws Exception {
-        listingValidator.validate(l);
         return listingRepository.save(l);
     }
 
@@ -52,8 +49,6 @@ public class ListingService {
         listing.setHorsepower(l.getHorsepower());
         listing.setTransmission(l.getTransmission());
         listing.setFuelType(l.getFuelType());
-
-        listingValidator.validate(listing);
 
         return listingRepository.save(listing);
     }
