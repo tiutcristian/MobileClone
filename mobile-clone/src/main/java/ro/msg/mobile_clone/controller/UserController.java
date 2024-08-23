@@ -1,6 +1,8 @@
 package ro.msg.mobile_clone.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +20,22 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/users")
 @AllArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
 
 
-    @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
+    @GetMapping(params = { "page", "size" })
+    public ResponseEntity<List<UserDto>> getAllPaginated(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size
+    ) {
+        Page<User> resultPage = userService.getUsersPaginated(page, size);
 
-        List<User> users = userService.getAllUsers();
+        log.debug("Page: {}, total pages: {} ", resultPage.getNumber(), resultPage.getTotalPages());
 
-        List<UserDto> userDTOs = users.stream()
+        List<UserDto> userDTOs = resultPage.stream()
                 .map(UserMapper.INSTANCE::mapUserToDto)
                 .toList();
 

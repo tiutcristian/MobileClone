@@ -22,7 +22,7 @@ public class Listing {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @ManyToOne//(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @NotNull(message = "User is mandatory")
     private User user;
