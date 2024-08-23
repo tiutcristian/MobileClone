@@ -3,8 +3,6 @@ package ro.msg.mobile_clone.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import ro.msg.mobile_clone.enums.FuelType;
-import ro.msg.mobile_clone.enums.Transmission;
 
 import java.time.Year;
 

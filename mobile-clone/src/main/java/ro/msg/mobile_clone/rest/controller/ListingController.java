@@ -1,4 +1,4 @@
-package ro.msg.mobile_clone.controller;
+package ro.msg.mobile_clone.rest.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;

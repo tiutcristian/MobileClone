@@ -1,7 +1,7 @@
 package ro.msg.mobile_clone.dto;
 
-import ro.msg.mobile_clone.enums.FuelType;
-import ro.msg.mobile_clone.enums.Transmission;
+import ro.msg.mobile_clone.entity.FuelType;
+import ro.msg.mobile_clone.entity.Transmission;
 
 import java.time.Year;
 

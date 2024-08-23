@@ -1,4 +1,4 @@
-package ro.msg.mobile_clone.controller;
+package ro.msg.mobile_clone.rest.exceptionHandler;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
