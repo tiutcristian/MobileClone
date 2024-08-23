@@ -1,12 +1,13 @@
 package ro.msg.mobile_clone.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.action.internal.EntityActionVetoException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ro.msg.mobile_clone.entity.User;
-import ro.msg.mobile_clone.exceptions.UserNotFoundException;
+import ro.msg.mobile_clone.exceptions.EntityNotFound;
 import ro.msg.mobile_clone.repository.UserRepository;
 
 import java.util.List;
@@ -24,11 +25,11 @@ public class UserService {
 
 
     public User getUserById(Long id)
-            throws UserNotFoundException {
+            throws EntityNotFound {
 
         return userRepository
                 .findById(id)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFound(User.class, id));
     }
 
 
@@ -38,11 +39,11 @@ public class UserService {
 
 
     public User updateUser(Long id, @NotNull User userDto)
-            throws UserNotFoundException {
+            throws EntityNotFound {
 
         User user = userRepository
                 .findById(id)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFound(User.class, id));
 
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
@@ -54,11 +55,11 @@ public class UserService {
 
 
     public void deleteUser(Long id)
-            throws UserNotFoundException {
+            throws EntityNotFound {
 
         User user = userRepository
                 .findById(id)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFound(User.class, id));
 
         userRepository.delete(user);
     }

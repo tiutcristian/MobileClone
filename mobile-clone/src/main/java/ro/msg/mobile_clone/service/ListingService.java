@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ro.msg.mobile_clone.entity.Listing;
-import ro.msg.mobile_clone.exceptions.ListingNotFoundException;
+import ro.msg.mobile_clone.exceptions.EntityNotFound;
 import ro.msg.mobile_clone.repository.ListingRepository;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
@@ -21,10 +22,10 @@ public class ListingService {
     }
 
 
-    public Listing getListingById(Long id) throws ListingNotFoundException {
+    public Listing getListingById(Long id) throws EntityNotFound {
         return listingRepository
                 .findById(id)
-                .orElseThrow(ListingNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFound(Listing.class, id));
     }
 
 
@@ -33,10 +34,10 @@ public class ListingService {
     }
 
 
-    public Listing updateListing(Long id, @NotNull Listing l) throws ListingNotFoundException {
+    public Listing updateListing(Long id, @NotNull Listing l) throws EntityNotFound {
         Listing listing = listingRepository
                 .findById(id)
-                .orElseThrow(ListingNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFound(Listing.class, id));
 
         listing.setUser(l.getUser());
         listing.setTitle(l.getTitle());
@@ -55,11 +56,11 @@ public class ListingService {
     }
 
 
-    public void deleteListing(Long id) throws ListingNotFoundException {
+    public void deleteListing(Long id) throws EntityNotFound {
 
         Listing listing = listingRepository
                 .findById(id)
-                .orElseThrow(ListingNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFound(Listing.class, id));
 
         listingRepository.delete(listing);
     }
