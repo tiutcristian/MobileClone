@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ro.msg.mobile_clone.dto.UserDto;
 import ro.msg.mobile_clone.entity.User;
-import ro.msg.mobile_clone.exceptions.EntityNotFound;
+import ro.msg.mobile_clone.exceptions.EntityNotFoundException;
+import ro.msg.mobile_clone.exceptions.UniqueFieldsViolationException;
 import ro.msg.mobile_clone.mapper.UserMapper;
 import ro.msg.mobile_clone.service.UserService;
 
@@ -44,7 +45,8 @@ public class UserController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto)
+            throws UniqueFieldsViolationException {
 
         User newUser = UserMapper.INSTANCE.mapDtoToUser(userDto);
         User savedUser = userService.createUser(newUser);
@@ -67,7 +69,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id)
-            throws EntityNotFound {
+            throws EntityNotFoundException {
 
         User user = userService.getUserById(id);
         UserDto userDto = UserMapper.INSTANCE.mapUserToDto(user);
@@ -78,7 +80,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateUser(@PathVariable Long id, @RequestBody UserDto userDto)
-            throws EntityNotFound {
+            throws EntityNotFoundException, UniqueFieldsViolationException {
 
         User user = UserMapper.INSTANCE.mapDtoToUser(userDto);
         User updatedUser = userService.updateUser(id, user);
@@ -97,7 +99,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id)
-            throws EntityNotFound {
+            throws EntityNotFoundException {
 
         userService.deleteUser(id);
 

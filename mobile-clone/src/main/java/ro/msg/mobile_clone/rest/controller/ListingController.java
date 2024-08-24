@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ro.msg.mobile_clone.dto.ListingDto;
 import ro.msg.mobile_clone.entity.Listing;
-import ro.msg.mobile_clone.exceptions.EntityNotFound;
+import ro.msg.mobile_clone.exceptions.EntityNotFoundException;
 import ro.msg.mobile_clone.mapper.ListingMapper;
 import ro.msg.mobile_clone.service.ListingService;
 import ro.msg.mobile_clone.service.UserService;
@@ -40,7 +40,7 @@ public class ListingController {
 
     @PostMapping("/create")
     public ResponseEntity<ListingDto> addListing(@RequestBody ListingDto listingDto)
-            throws EntityNotFound {
+            throws EntityNotFoundException {
 
         Listing newListing = ListingMapper.INSTANCE.mapToListing(listingDto, userService);
         Listing savedListing = listingService.createListing(newListing);
@@ -63,7 +63,7 @@ public class ListingController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ListingDto> getListingById(@PathVariable Long id)
-            throws EntityNotFound {
+            throws EntityNotFoundException {
 
         Listing listing = listingService.getListingById(id);
         ListingDto listingDto = ListingMapper.INSTANCE.mapToListingDto(listing);
@@ -74,7 +74,7 @@ public class ListingController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateListing(@PathVariable Long id, @RequestBody ListingDto listingDto)
-            throws EntityNotFound {
+            throws EntityNotFoundException {
 
         Listing listing = ListingMapper.INSTANCE.mapToListing(listingDto, userService);
         Listing updatedListing = listingService.updateListing(id, listing);
@@ -93,7 +93,7 @@ public class ListingController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteListing(@PathVariable Long id)
-            throws EntityNotFound {
+            throws EntityNotFoundException {
 
         listingService.deleteListing(id);
 

@@ -30,13 +30,11 @@ public class User {
 
     @Email(message = "Invalid email address")
     @NotBlank(message = "Email is mandatory")
-    @Column(unique = true)
     @Convert(converter = LowercaseConverter.class)
     private String email;
 
     @Pattern(regexp = "^\\+?[0-9]{10,14}$", message = "Invalid phone number")
     @NotBlank(message = "Phone is mandatory")
-    @Column(unique = true)
     private String phone;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
