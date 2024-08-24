@@ -1,6 +1,7 @@
 package ro.msg.mobile_clone.rest.exceptionHandler;
 
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -27,8 +28,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(SQLException.class)
-    public ResponseEntity<String> handlePSQLException(SQLException e) {
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handlePSQLException(DataIntegrityViolationException e) {
         if (e.getMessage().contains("duplicate key value violates unique constraint")) {
             String sb = e.getMessage().substring(e.getMessage().indexOf("Key") + 5, e.getMessage().indexOf(")")) +
                     " already exists";
