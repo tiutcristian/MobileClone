@@ -1,16 +1,26 @@
 package ro.msg.mobile_clone.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ro.msg.mobile_clone.entity.Listing;
 import ro.msg.mobile_clone.exceptions.EntityNotFoundException;
 import ro.msg.mobile_clone.repository.ListingRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +28,9 @@ import java.util.List;
 public class ListingService {
 
     private final ListingRepository listingRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
 
     public Listing createListing(Listing l) {
@@ -99,5 +112,37 @@ public class ListingService {
 
         log.debug("Deleting listing: {}", listing);
         listingRepository.delete(listing);
+    }
+
+
+    public Page<Listing> searchListings(Map<String, Object> params, Pageable pageable) {
+        Session session = entityManager.unwrap(Session.class);
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Listing> cq = cb.createQuery(Listing.class);
+        Root<Listing> root = cq.from(Listing.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            String fieldName = entry.getKey();
+            if(!fieldName.equals("page") && !fieldName.equals("size")) {
+                Object fieldValue = entry.getValue();
+
+                if (fieldValue != null) {
+                    Predicate predicate = cb.equal(root.get(fieldName), fieldValue);
+                    predicates.add(predicate);
+                }
+            }
+        }
+
+        cq.where(predicates.toArray(new Predicate[0]));
+
+        List<Listing> resultList = entityManager.createQuery(cq)
+                .getResultList();
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), resultList.size());
+
+        return new PageImpl<>(resultList.subList(start, end), pageable, resultList.size());
     }
 }

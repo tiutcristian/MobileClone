@@ -1,7 +1,7 @@
 package ro.msg.mobile_clone.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import javax.validation.constraints.*;
 import lombok.*;
 
 import java.time.Year;

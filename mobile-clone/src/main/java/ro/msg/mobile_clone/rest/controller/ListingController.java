@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import ro.msg.mobile_clone.service.ListingService;
 import ro.msg.mobile_clone.service.UserService;
 
 import java.net.URI;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/listings")
@@ -126,4 +128,22 @@ public class ListingController {
 
         return ResponseEntity.ok().build();
     }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<ListingDto>> searchListings(
+            @RequestParam Map<String, Object> allParams,
+            @PageableDefault Pageable pageable
+    ) {
+
+        Page<ListingDto> resultPage = listingService
+                .searchListings(allParams, pageable)
+                .map(ListingMapper.INSTANCE::mapToListingDto);
+
+        log.info("Retrieved page {} of size {} with {} elements",
+                resultPage.getNumber(), resultPage.getSize(), resultPage.getNumberOfElements());
+
+        return ResponseEntity.ok(resultPage);
+    }
+
 }
