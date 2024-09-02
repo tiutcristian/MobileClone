@@ -3,6 +3,8 @@ package ro.msg.mobile_clone.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ro.msg.mobile_clone.entity.Listing;
 import ro.msg.mobile_clone.exceptions.EntityNotFoundException;
@@ -33,8 +35,8 @@ public class ListingService {
     }
 
 
-    public List<Listing> getAllListings() {
-        return listingRepository.findAll();
+    public Page<Listing> getAllPaginated(Pageable pageable) {
+        return listingRepository.findAll(pageable);
     }
 
 

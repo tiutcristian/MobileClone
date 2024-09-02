@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ro.msg.mobile_clone.entity.User;
 import ro.msg.mobile_clone.entity.validator.UserValidator;
@@ -40,8 +40,8 @@ public class UserService {
     }
 
 
-    public Page<User> getUsersPaginated(int pageNumber, int size) {
-        return userRepository.findAll(PageRequest.of(pageNumber, size));
+    public Page<User> getAllPaginated(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
 

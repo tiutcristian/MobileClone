@@ -3,6 +3,8 @@ package ro.msg.mobile_clone.rest.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +18,6 @@ import ro.msg.mobile_clone.mapper.UserMapper;
 import ro.msg.mobile_clone.service.UserService;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -27,21 +28,17 @@ public class UserController {
     private final UserService userService;
 
 
-    @GetMapping(params = { "page", "size" })
-    public ResponseEntity<List<UserDto>> getAllPaginated(
-            @RequestParam("page") int page,
-            @RequestParam("size") int size
-    ) {
-        Page<User> resultPage = userService.getUsersPaginated(page, size);
+    @GetMapping
+    public ResponseEntity<Page<UserDto>> getAll(Pageable pageable) {
+
+        Page<UserDto> resultPage = userService
+                .getAllPaginated(pageable)
+                .map(UserMapper.INSTANCE::mapUserToDto);
 
         log.info("Retrieved page {} of size {} with {} elements",
                 resultPage.getNumber(), resultPage.getSize(), resultPage.getNumberOfElements());
 
-        List<UserDto> userDTOs = resultPage.stream()
-                .map(UserMapper.INSTANCE::mapUserToDto)
-                .toList();
-
-        return ResponseEntity.ok(userDTOs);
+        return ResponseEntity.ok(resultPage);
     }
 
 

@@ -2,6 +2,8 @@ package ro.msg.mobile_clone.rest.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,6 @@ import ro.msg.mobile_clone.service.ListingService;
 import ro.msg.mobile_clone.service.UserService;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/listings")
@@ -28,19 +29,16 @@ public class ListingController {
 
 
     @GetMapping
-    public ResponseEntity<List<ListingDto>> getAllListings() {
+    public ResponseEntity<Page<ListingDto>> getAll(Pageable pageable) {
 
-        List<Listing> listings = listingService.getAllListings();
-        log.debug("Found {} listings", listings.size());
+        Page<ListingDto> resultPage = listingService
+                .getAllPaginated(pageable)
+                .map(ListingMapper.INSTANCE::mapToListingDto);
 
-        List<ListingDto> listingDTOs = listings.stream()
-                .map(ListingMapper.INSTANCE::mapToListingDto)
-                .toList();
-        log.debug("Converted {} listings to DTOs", listingDTOs.size());
+        log.info("Retrieved page {} of size {} with {} elements",
+                resultPage.getNumber(), resultPage.getSize(), resultPage.getNumberOfElements());
 
-        log.info("Retrieved all listings");
-
-        return ResponseEntity.ok(listingDTOs);
+        return ResponseEntity.ok(resultPage);
     }
 
 
