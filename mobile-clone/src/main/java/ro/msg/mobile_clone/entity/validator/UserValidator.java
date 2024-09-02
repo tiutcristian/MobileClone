@@ -8,6 +8,7 @@ import ro.msg.mobile_clone.exceptions.UniqueFieldsViolationException;
 import ro.msg.mobile_clone.repository.UserRepository;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -26,10 +27,13 @@ public class UserValidator {
 
         Set<String> problematicFields = new HashSet<>();
 
-        if (userRepository.findByEmail(user.getEmail()) != null) {
+        User userByEmail = userRepository.findByEmail(user.getEmail());
+        if (userByEmail != null && !Objects.equals(userByEmail.getId(), user.getId())) {
             problematicFields.add("email");
         }
-        if (userRepository.findByPhone(user.getPhone()) != null) {
+
+        User userByPhone = userRepository.findByPhone(user.getPhone());
+        if (userByPhone != null && !Objects.equals(userByPhone.getId(), user.getId())) {
             problematicFields.add("phone");
         }
 

@@ -14,6 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class User {
 
     @Id
@@ -37,6 +38,12 @@ public class User {
     @NotBlank(message = "Phone is mandatory")
     private String phone;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @ToString.Exclude
     private Set<Listing> listings;
 }

@@ -12,6 +12,7 @@ import java.time.Year;
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
 public class Listing {
 
     @Id
@@ -21,6 +22,7 @@ public class Listing {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     @JoinColumn(name = "user_id", nullable = false)
     @NotNull(message = "User is mandatory")
     private User user;

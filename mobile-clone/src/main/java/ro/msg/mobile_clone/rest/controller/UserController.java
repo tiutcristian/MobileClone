@@ -34,7 +34,8 @@ public class UserController {
     ) {
         Page<User> resultPage = userService.getUsersPaginated(page, size);
 
-        log.debug("Page: {}, total pages: {} ", resultPage.getNumber(), resultPage.getTotalPages());
+        log.info("Retrieved page {} of size {} with {} elements",
+                resultPage.getNumber(), resultPage.getSize(), resultPage.getNumberOfElements());
 
         List<UserDto> userDTOs = resultPage.stream()
                 .map(UserMapper.INSTANCE::mapUserToDto)
@@ -49,19 +50,29 @@ public class UserController {
             throws UniqueFieldsViolationException {
 
         User newUser = UserMapper.INSTANCE.mapDtoToUser(userDto);
+        log.debug("DTO mapped to entity: {}", newUser);
+
         User savedUser = userService.createUser(newUser);
+        log.debug("Entity saved: {}", savedUser);
+
         UserDto savedUserDto = UserMapper.INSTANCE.mapUserToDto(savedUser);
+        log.debug("Entity mapped back to DTO: {}", savedUserDto);
+
+        log.info("Created user with id {}", savedUser.getId());
 
         String currentPath = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .toUriString();
+        log.debug("Current path: {}", currentPath);
 
         String targetPath = currentPath.replace("/create", "/{id}");
+        log.debug("Target path: {}", targetPath);
 
         URI location = ServletUriComponentsBuilder
                 .fromUriString(targetPath)
                 .buildAndExpand(savedUser.getId())
                 .toUri();
+        log.debug("Location: {}", location);
 
         return ResponseEntity.created(location).body(savedUserDto);
     }
@@ -72,7 +83,12 @@ public class UserController {
             throws EntityNotFoundException {
 
         User user = userService.getUserById(id);
+        log.debug("User retrieved: {}", user);
+
         UserDto userDto = UserMapper.INSTANCE.mapUserToDto(user);
+        log.debug("User mapped to DTO: {}", userDto);
+
+        log.info("User with id {} retrieved successfully", id);
 
         return ResponseEntity.ok(userDto);
     }
@@ -83,15 +99,22 @@ public class UserController {
             throws EntityNotFoundException, UniqueFieldsViolationException {
 
         User user = UserMapper.INSTANCE.mapDtoToUser(userDto);
+        log.debug("DTO from user mapped to entity: {}", user);
+
         User updatedUser = userService.updateUser(id, user);
+        log.debug("Updated entity: {}", updatedUser);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .buildAndExpand(updatedUser.getId())
                 .toUri();
+        log.debug("Location: {}", location);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(location);
+        log.debug("Headers: {}", headers);
+
+        log.info("User with id {} updated successfully", id);
 
         return new ResponseEntity<>(headers, HttpStatus.OK);
     }
@@ -102,6 +125,7 @@ public class UserController {
             throws EntityNotFoundException {
 
         userService.deleteUser(id);
+        log.info("User with id {} deleted successfully", id);
 
         return ResponseEntity.ok().build();
     }
