@@ -131,18 +131,23 @@ public class ListingService {
                 if (fieldValue != null) {
                     Predicate predicate = cb.equal(root.get(fieldName), fieldValue);
                     predicates.add(predicate);
+                    log.debug("Added predicate for field {} with value {}", fieldName, fieldValue);
                 }
             }
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
+        log.debug("Criteria query created");
 
         List<Listing> resultList = entityManager.createQuery(cq)
                 .getResultList();
+        log.debug("Got the result list");
 
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), resultList.size());
+        log.debug("Start: {}, end: {}", start, end);
 
+        log.debug("Returning corresponding page");
         return new PageImpl<>(resultList.subList(start, end), pageable, resultList.size());
     }
 }
