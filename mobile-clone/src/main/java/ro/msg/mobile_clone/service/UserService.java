@@ -6,10 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ro.msg.mobile_clone.entity.User;
-import ro.msg.mobile_clone.entity.validator.UserValidator;
-import ro.msg.mobile_clone.exceptions.EntityNotFoundException;
-import ro.msg.mobile_clone.exceptions.UniqueFieldsViolationException;
+import ro.msg.mobile_clone.model.entity.User;
+import ro.msg.mobile_clone.model.entity.validator.UserValidator;
+import ro.msg.mobile_clone.other.exceptions.EntityNotFoundException;
+import ro.msg.mobile_clone.other.exceptions.UniqueFieldsViolationException;
 import ro.msg.mobile_clone.repository.UserRepository;
 
 @Service

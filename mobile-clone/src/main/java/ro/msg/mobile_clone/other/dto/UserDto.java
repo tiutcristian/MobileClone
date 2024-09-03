@@ -1,4 +1,4 @@
-package ro.msg.mobile_clone.dto;
+package ro.msg.mobile_clone.other.dto;
 
 public record UserDto(
         Long id,

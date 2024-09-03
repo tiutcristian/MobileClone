@@ -1,4 +1,4 @@
-package ro.msg.mobile_clone.exceptions;
+package ro.msg.mobile_clone.other.exceptions;
 
 import java.util.Set;
 

@@ -9,11 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ro.msg.mobile_clone.dto.UserDto;
-import ro.msg.mobile_clone.entity.User;
-import ro.msg.mobile_clone.exceptions.EntityNotFoundException;
-import ro.msg.mobile_clone.exceptions.UniqueFieldsViolationException;
-import ro.msg.mobile_clone.mapper.UserMapper;
+import ro.msg.mobile_clone.other.dto.UserDto;
+import ro.msg.mobile_clone.model.entity.User;
+import ro.msg.mobile_clone.other.exceptions.EntityNotFoundException;
+import ro.msg.mobile_clone.other.exceptions.UniqueFieldsViolationException;
+import ro.msg.mobile_clone.other.mapper.UserMapper;
 import ro.msg.mobile_clone.service.UserService;
 
 import java.net.URI;

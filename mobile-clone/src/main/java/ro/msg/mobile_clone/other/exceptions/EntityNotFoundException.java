@@ -1,4 +1,4 @@
-package ro.msg.mobile_clone.exceptions;
+package ro.msg.mobile_clone.other.exceptions;
 
 public class EntityNotFoundException extends Exception {
     public EntityNotFoundException(Class<?> cls, Long id) {
