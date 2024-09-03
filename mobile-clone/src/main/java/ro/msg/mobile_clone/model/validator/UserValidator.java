@@ -1,4 +1,4 @@
-package ro.msg.mobile_clone.model.entity.validator;
+package ro.msg.mobile_clone.model.validator;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;

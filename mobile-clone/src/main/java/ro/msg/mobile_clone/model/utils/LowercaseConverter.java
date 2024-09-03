@@ -1,4 +1,4 @@
-package ro.msg.mobile_clone.model.entity;
+package ro.msg.mobile_clone.model.utils;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
