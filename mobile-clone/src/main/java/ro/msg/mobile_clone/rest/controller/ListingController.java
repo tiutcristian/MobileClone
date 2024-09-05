@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ro.msg.mobile_clone.other.dto.ListingDto;
@@ -59,21 +60,9 @@ public class ListingController {
 
         log.info("Created listing with id {}", savedListing.getId());
 
-        String currentPath = ServletUriComponentsBuilder
-                .fromCurrentRequestUri()
-                .toUriString();
-        log.debug("Current path: {}", currentPath);
-
-        String targetPath = currentPath.replace("/create", "/{id}");
-        log.debug("Target path: {}", targetPath);
-
-        URI location = ServletUriComponentsBuilder
-                .fromUriString(targetPath)
-                .buildAndExpand(savedListingDto.id())
-                .toUri();
-        log.debug("Location: {}", location);
-
-        return ResponseEntity.created(location).body(savedListingDto);
+        return ResponseEntity
+                .created(URI.create("/api/v1/listings/" + savedListing.getId()))
+                .body(savedListingDto);
     }
 
 
@@ -145,5 +134,6 @@ public class ListingController {
 
         return ResponseEntity.ok(resultPage);
     }
+
 
 }

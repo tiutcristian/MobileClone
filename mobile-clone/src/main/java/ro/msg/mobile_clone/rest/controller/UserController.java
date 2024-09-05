@@ -56,21 +56,9 @@ public class UserController {
 
         log.info("Created user with id {}", savedUser.getId());
 
-        String currentPath = ServletUriComponentsBuilder
-                .fromCurrentRequestUri()
-                .toUriString();
-        log.debug("Current path: {}", currentPath);
-
-        String targetPath = currentPath.replace("/create", "/{id}");
-        log.debug("Target path: {}", targetPath);
-
-        URI location = ServletUriComponentsBuilder
-                .fromUriString(targetPath)
-                .buildAndExpand(savedUser.getId())
-                .toUri();
-        log.debug("Location: {}", location);
-
-        return ResponseEntity.created(location).body(savedUserDto);
+        return ResponseEntity
+                .created(URI.create("/api/v1/users/" + savedUser.getId()))
+                .body(savedUserDto);
     }
 
 
@@ -95,10 +83,10 @@ public class UserController {
             throws EntityNotFoundException, UniqueFieldsViolationException {
 
         User user = UserMapper.INSTANCE.mapDtoToUser(userDto);
-        log.debug("DTO from user mapped to entity: {}", user);
+        log.debug("UserDTO mapped to User: {}", user);
 
         User updatedUser = userService.updateUser(id, user);
-        log.debug("Updated entity: {}", updatedUser);
+        log.debug("Updated user: {}", updatedUser);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
