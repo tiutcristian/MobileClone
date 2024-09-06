@@ -17,9 +17,12 @@ import org.springframework.stereotype.Service;
 import ro.msg.mobile_clone.model.entity.Auction;
 import ro.msg.mobile_clone.model.entity.Bid;
 import ro.msg.mobile_clone.model.entity.User;
+import ro.msg.mobile_clone.model.validator.AuctionValidator;
 import ro.msg.mobile_clone.other.exceptions.EntityNotFoundException;
+import ro.msg.mobile_clone.other.exceptions.InvalidAuctionException;
 import ro.msg.mobile_clone.repository.AuctionRepository;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +38,10 @@ public class AuctionService {
     private EntityManager entityManager;
 
 
-    public Auction startAuction(Auction a) {
+    public Auction startAuction(Auction a) throws InvalidAuctionException {
+        AuctionValidator.validateCreatedAuction(a);
+        log.debug("Auction validated: {}", a);
+
         log.debug("Saving auction: {}", a);
         return auctionRepository.save(a);
     }
@@ -77,7 +83,7 @@ public class AuctionService {
         Root<Auction> root = cq.from(Auction.class);
 
         List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.lessThanOrEqualTo(root.get("endingTimestamp"), System.currentTimeMillis()));
+        predicates.add(cb.lessThanOrEqualTo(root.get("endingTimestamp"), new Timestamp(System.currentTimeMillis())));
         log.debug("Ending timestamp predicate added");
         predicates.add(cb.isNull(root.get("winner")));
         log.debug("Winner predicate added");

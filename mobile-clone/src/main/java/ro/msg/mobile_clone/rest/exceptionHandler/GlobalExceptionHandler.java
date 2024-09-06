@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ro.msg.mobile_clone.other.exceptions.InvalidAuctionException;
 import ro.msg.mobile_clone.other.exceptions.UniqueFieldsViolationException;
 
 
@@ -36,6 +37,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUniqueFieldsViolationException(UniqueFieldsViolationException e) {
         log.error("Unique fields violation error: {}", e.getMessage());
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(InvalidAuctionException.class)
+    public ResponseEntity<String> handleInvalidAuctionException(InvalidAuctionException e) {
+        String[] errors = e.getConstraintViolations().toArray(String[]::new);
+
+        log.error("Invalid auction error: {}", String.join(" | ", errors));
+
+        return new ResponseEntity<>(
+                "Invalid auction error:\n\t" + String.join("\n\t", errors),
+                HttpStatus.BAD_REQUEST
+        );
     }
 
 
