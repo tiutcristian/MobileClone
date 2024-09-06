@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ro.msg.mobile_clone.model.entity.Bid;
 import ro.msg.mobile_clone.other.dto.BidDto;
 import ro.msg.mobile_clone.other.exceptions.EntityNotFoundException;
+import ro.msg.mobile_clone.other.exceptions.InvalidEntityException;
 import ro.msg.mobile_clone.other.mapper.BidMapper;
 import ro.msg.mobile_clone.service.AuctionService;
 import ro.msg.mobile_clone.service.BidService;
@@ -28,7 +29,8 @@ public class BidController {
 
 
     @PostMapping("/place")
-    public ResponseEntity<BidDto> placeBid(@RequestBody BidDto bidDto) throws EntityNotFoundException {
+    public ResponseEntity<BidDto> placeBid(@RequestBody BidDto bidDto)
+            throws EntityNotFoundException, InvalidEntityException {
 
         Bid newBid = BidMapper.INSTANCE.mapToBid(bidDto, auctionService, userService);
         log.debug("DTO mapped to entity: {}", newBid);

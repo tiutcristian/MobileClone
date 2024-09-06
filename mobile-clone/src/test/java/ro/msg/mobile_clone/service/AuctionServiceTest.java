@@ -2,7 +2,6 @@ package ro.msg.mobile_clone.service;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,13 +12,10 @@ import ro.msg.mobile_clone.model.entity.Listing;
 import ro.msg.mobile_clone.model.entity.User;
 import ro.msg.mobile_clone.model.utils.FuelType;
 import ro.msg.mobile_clone.model.utils.Transmission;
-import ro.msg.mobile_clone.other.exceptions.InvalidAuctionException;
+import ro.msg.mobile_clone.other.exceptions.InvalidEntityException;
 import ro.msg.mobile_clone.repository.AuctionRepository;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.Year;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -71,7 +67,7 @@ public class AuctionServiceTest {
     }
 
     @Test
-    public void testStartAuction() throws InvalidAuctionException {
+    public void testStartAuction() throws InvalidEntityException {
         // setup
         setUpAuction();
         Mockito.when(myRepository.save(auction)).thenReturn(auction);

@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ro.msg.mobile_clone.model.entity.Auction;
 import ro.msg.mobile_clone.model.entity.Bid;
+import ro.msg.mobile_clone.model.validator.BidValidator;
 import ro.msg.mobile_clone.other.exceptions.EntityNotFoundException;
+import ro.msg.mobile_clone.other.exceptions.InvalidEntityException;
 import ro.msg.mobile_clone.repository.AuctionRepository;
 import ro.msg.mobile_clone.repository.BidRepository;
 
@@ -19,8 +21,10 @@ public class BidService {
     private final BidRepository bidRepository;
     private final AuctionRepository auctionRepository;
 
+    public Bid placeBid(Bid b) throws InvalidEntityException {
+        BidValidator.validateBid(b);
+        log.debug("Bid validated: {}", b);
 
-    public Bid placeBid(Bid b) {
         log.debug("Placing bid: {}", b);
         return bidRepository.save(b);
     }

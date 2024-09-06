@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ro.msg.mobile_clone.model.entity.Auction;
 import ro.msg.mobile_clone.other.dto.AuctionDto;
 import ro.msg.mobile_clone.other.exceptions.EntityNotFoundException;
-import ro.msg.mobile_clone.other.exceptions.InvalidAuctionException;
+import ro.msg.mobile_clone.other.exceptions.InvalidEntityException;
 import ro.msg.mobile_clone.other.mapper.AuctionMapper;
 import ro.msg.mobile_clone.service.AuctionService;
 import ro.msg.mobile_clone.service.ListingService;
@@ -44,7 +44,7 @@ public class AuctionController {
 
     @PostMapping("/create")
     public ResponseEntity<AuctionDto> addAuction(@RequestBody AuctionDto auctionDto)
-            throws EntityNotFoundException, InvalidAuctionException {
+            throws EntityNotFoundException, InvalidEntityException {
 
         Auction newAuction = AuctionMapper.INSTANCE.mapToAuction(auctionDto, listingService, userService);
         log.debug("DTO mapped to entity: {}", newAuction);

@@ -19,7 +19,7 @@ import ro.msg.mobile_clone.model.entity.Bid;
 import ro.msg.mobile_clone.model.entity.User;
 import ro.msg.mobile_clone.model.validator.AuctionValidator;
 import ro.msg.mobile_clone.other.exceptions.EntityNotFoundException;
-import ro.msg.mobile_clone.other.exceptions.InvalidAuctionException;
+import ro.msg.mobile_clone.other.exceptions.InvalidEntityException;
 import ro.msg.mobile_clone.repository.AuctionRepository;
 
 import java.sql.Timestamp;
@@ -38,7 +38,7 @@ public class AuctionService {
     private EntityManager entityManager;
 
 
-    public Auction startAuction(Auction a) throws InvalidAuctionException {
+    public Auction startAuction(Auction a) throws InvalidEntityException {
         AuctionValidator.validateCreatedAuction(a);
         log.debug("Auction validated: {}", a);
 

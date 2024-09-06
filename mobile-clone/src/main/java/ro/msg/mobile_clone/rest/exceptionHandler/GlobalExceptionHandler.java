@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ro.msg.mobile_clone.other.exceptions.InvalidAuctionException;
+import ro.msg.mobile_clone.other.exceptions.InvalidEntityException;
 import ro.msg.mobile_clone.other.exceptions.UniqueFieldsViolationException;
 
 
@@ -40,14 +40,17 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(InvalidAuctionException.class)
-    public ResponseEntity<String> handleInvalidAuctionException(InvalidAuctionException e) {
+    @ExceptionHandler(InvalidEntityException.class)
+    public ResponseEntity<String> handleInvalidAuctionException(InvalidEntityException e) {
         String[] errors = e.getConstraintViolations().toArray(String[]::new);
 
-        log.error("Invalid auction error: {}", String.join(" | ", errors));
+        log.error("Invalid {} error: {}", e.getClazz().getSimpleName(), String.join(" | ", errors));
 
         return new ResponseEntity<>(
-                "Invalid auction error:\n\t" + String.join("\n\t", errors),
+                "Invalid " +
+                        e.getClazz().getSimpleName() +
+                        " error:\n\t" +
+                        String.join("\n\t", errors),
                 HttpStatus.BAD_REQUEST
         );
     }

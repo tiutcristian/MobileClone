@@ -1,10 +1,9 @@
 package ro.msg.mobile_clone.model.validator;
 
 import ro.msg.mobile_clone.model.entity.Auction;
-import ro.msg.mobile_clone.other.exceptions.InvalidAuctionException;
+import ro.msg.mobile_clone.other.exceptions.InvalidEntityException;
 
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +11,7 @@ public class AuctionValidator {
 
     public static final long MIN_AUCTION_DURATION = 60000; // 1 minute
 
-    public static void validateCreatedAuction(Auction a) throws InvalidAuctionException {
+    public static void validateCreatedAuction(Auction a) throws InvalidEntityException {
         Set<String> errors = new HashSet<>();
 
         if (a.getWinner() != null) {
@@ -28,7 +27,7 @@ public class AuctionValidator {
         }
 
         if (!errors.isEmpty()) {
-            throw new InvalidAuctionException(errors);
+            throw new InvalidEntityException(Auction.class, errors);
         }
     }
 }

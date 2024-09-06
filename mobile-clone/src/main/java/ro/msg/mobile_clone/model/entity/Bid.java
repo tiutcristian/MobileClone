@@ -34,6 +34,5 @@ public class Bid {
     private User bidder;
 
     @NotNull(message = "Offer is mandatory")
-    @Min(value = 0, message = "Offer must be positive")
     private double offer;
 }
