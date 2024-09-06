@@ -1,14 +1,14 @@
-package ro.msg.mobile_clone.other.mapper;
+package ro.msg.mobile_clone.rest.mapper;
 
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import ro.msg.mobile_clone.other.dto.ListingDto;
-import ro.msg.mobile_clone.model.entity.Listing;
-import ro.msg.mobile_clone.model.entity.User;
-import ro.msg.mobile_clone.other.exceptions.EntityNotFoundException;
+import ro.msg.mobile_clone.dto.ListingDto;
+import ro.msg.mobile_clone.entity.Listing;
+import ro.msg.mobile_clone.entity.User;
+import ro.msg.mobile_clone.exceptions.EntityNotFoundException;
 import ro.msg.mobile_clone.service.UserService;
 
 @Mapper(componentModel = "spring", uses = {UserService.class})

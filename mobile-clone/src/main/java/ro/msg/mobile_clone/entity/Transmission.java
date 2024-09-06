@@ -1,3 +1,3 @@
-package ro.msg.mobile_clone.model.utils;
+package ro.msg.mobile_clone.entity;
 
 public enum Transmission { MANUAL, AUTOMATIC }

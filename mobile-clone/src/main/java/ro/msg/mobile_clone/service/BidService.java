@@ -1,21 +1,23 @@
 package ro.msg.mobile_clone.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ro.msg.mobile_clone.model.entity.Auction;
-import ro.msg.mobile_clone.model.entity.Bid;
-import ro.msg.mobile_clone.model.validator.BidValidator;
-import ro.msg.mobile_clone.other.exceptions.EntityNotFoundException;
-import ro.msg.mobile_clone.other.exceptions.InvalidEntityException;
+import ro.msg.mobile_clone.entity.Auction;
+import ro.msg.mobile_clone.entity.Bid;
+import ro.msg.mobile_clone.entity.validator.BidValidator;
+import ro.msg.mobile_clone.exceptions.EntityNotFoundException;
+import ro.msg.mobile_clone.exceptions.InvalidEntityException;
 import ro.msg.mobile_clone.repository.AuctionRepository;
 import ro.msg.mobile_clone.repository.BidRepository;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class BidService {
 
     private final BidRepository bidRepository;

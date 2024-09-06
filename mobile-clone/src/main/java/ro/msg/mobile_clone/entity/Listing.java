@@ -1,10 +1,8 @@
-package ro.msg.mobile_clone.model.entity;
+package ro.msg.mobile_clone.entity;
 
 import jakarta.persistence.*;
 import javax.validation.constraints.*;
 import lombok.*;
-import ro.msg.mobile_clone.model.utils.FuelType;
-import ro.msg.mobile_clone.model.utils.Transmission;
 
 import java.time.Year;
 

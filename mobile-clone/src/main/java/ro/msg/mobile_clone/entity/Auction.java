@@ -1,4 +1,4 @@
-package ro.msg.mobile_clone.model.entity;
+package ro.msg.mobile_clone.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,8 +40,10 @@ public class Auction {
             mappedBy = "auction",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.EAGER
+            fetch = FetchType.LAZY
     )
     @ToString.Exclude
     private Set<Bid> bids;
+
+    private boolean active = true;
 }

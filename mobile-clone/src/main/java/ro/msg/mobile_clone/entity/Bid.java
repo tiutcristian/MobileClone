@@ -1,9 +1,8 @@
-package ro.msg.mobile_clone.model.entity;
+package ro.msg.mobile_clone.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Entity

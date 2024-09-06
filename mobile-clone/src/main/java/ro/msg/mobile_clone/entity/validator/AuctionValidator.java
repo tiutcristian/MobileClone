@@ -1,7 +1,7 @@
-package ro.msg.mobile_clone.model.validator;
+package ro.msg.mobile_clone.entity.validator;
 
-import ro.msg.mobile_clone.model.entity.Auction;
-import ro.msg.mobile_clone.other.exceptions.InvalidEntityException;
+import ro.msg.mobile_clone.entity.Auction;
+import ro.msg.mobile_clone.exceptions.InvalidEntityException;
 
 import java.sql.Timestamp;
 import java.util.HashSet;

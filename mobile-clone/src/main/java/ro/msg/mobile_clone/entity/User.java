@@ -1,11 +1,11 @@
-package ro.msg.mobile_clone.model.entity;
+package ro.msg.mobile_clone.entity;
 
 import jakarta.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.*;
-import ro.msg.mobile_clone.model.utils.LowercaseConverter;
+import ro.msg.mobile_clone.converters.LowercaseConverter;
 
 import java.util.Set;
 

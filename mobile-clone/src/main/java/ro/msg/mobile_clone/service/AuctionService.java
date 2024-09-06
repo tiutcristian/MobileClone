@@ -14,15 +14,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import ro.msg.mobile_clone.model.entity.Auction;
-import ro.msg.mobile_clone.model.entity.Bid;
-import ro.msg.mobile_clone.model.entity.User;
-import ro.msg.mobile_clone.model.validator.AuctionValidator;
-import ro.msg.mobile_clone.other.exceptions.EntityNotFoundException;
-import ro.msg.mobile_clone.other.exceptions.InvalidEntityException;
+import ro.msg.mobile_clone.entity.Auction;
+import ro.msg.mobile_clone.entity.Bid;
+import ro.msg.mobile_clone.entity.User;
+import ro.msg.mobile_clone.entity.validator.AuctionValidator;
+import ro.msg.mobile_clone.exceptions.EntityNotFoundException;
+import ro.msg.mobile_clone.exceptions.InvalidEntityException;
 import ro.msg.mobile_clone.repository.AuctionRepository;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class AuctionService {
 
     private final AuctionRepository auctionRepository;
@@ -75,7 +77,6 @@ public class AuctionService {
 
 
     @Scheduled(fixedRate = 60000, initialDelay = 3000) // 1 minute rate | 3 seconds initial delay
-    @Transactional
     public void checkFinishedAuctions() {
         Session session = entityManager.unwrap(Session.class);
         CriteriaBuilder cb = session.getCriteriaBuilder();
@@ -83,12 +84,10 @@ public class AuctionService {
         Root<Auction> root = cq.from(Auction.class);
 
         List<Predicate> predicates = new ArrayList<>();
-        predicates.add(cb.lessThanOrEqualTo(root.get("endingTimestamp"), new Timestamp(System.currentTimeMillis())));
+        predicates.add(cb.lessThanOrEqualTo(root.get("endingTimestamp"), Timestamp.from(Instant.now())));
         log.debug("Ending timestamp predicate added");
-        predicates.add(cb.isNull(root.get("winner")));
-        log.debug("Winner predicate added");
-        predicates.add(cb.isNotEmpty(root.get("bids")));
-        log.debug("Bids predicate added");
+        predicates.add(cb.isTrue(root.get("active")));
+        log.debug("Active check predicate added");
         cq.where(predicates.toArray(new Predicate[0]));
         log.debug("Criteria query created");
 
@@ -105,9 +104,9 @@ public class AuctionService {
                 a.setWinner(winner);
                 log.debug("Winner set: {}", a.getWinner());
             } else {
-                log.error("No winner found. Criteria is not working properly " +
-                        "(it should not allow retrieving auctions without bids).");
+                log.debug("No winner found. No bids were placed on this auction.");
             }
+            a.setActive(false);
             auctionRepository.save(a);
             log.debug("Auction saved: {}", a);
         }

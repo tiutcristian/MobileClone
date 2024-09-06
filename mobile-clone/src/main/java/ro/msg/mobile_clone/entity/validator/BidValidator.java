@@ -1,12 +1,10 @@
-package ro.msg.mobile_clone.model.validator;
+package ro.msg.mobile_clone.entity.validator;
 
-import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Component;
-import ro.msg.mobile_clone.model.entity.Auction;
-import ro.msg.mobile_clone.model.entity.Bid;
-import ro.msg.mobile_clone.model.entity.Listing;
-import ro.msg.mobile_clone.model.entity.User;
-import ro.msg.mobile_clone.other.exceptions.InvalidEntityException;
+import ro.msg.mobile_clone.entity.Auction;
+import ro.msg.mobile_clone.entity.Bid;
+import ro.msg.mobile_clone.entity.Listing;
+import ro.msg.mobile_clone.entity.User;
+import ro.msg.mobile_clone.exceptions.InvalidEntityException;
 
 import java.sql.Timestamp;
 import java.util.HashSet;

@@ -8,13 +8,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ro.msg.mobile_clone.other.dto.ListingDto;
-import ro.msg.mobile_clone.model.entity.Listing;
-import ro.msg.mobile_clone.other.exceptions.EntityNotFoundException;
-import ro.msg.mobile_clone.other.mapper.ListingMapper;
+import ro.msg.mobile_clone.dto.ListingDto;
+import ro.msg.mobile_clone.entity.Listing;
+import ro.msg.mobile_clone.exceptions.EntityNotFoundException;
+import ro.msg.mobile_clone.rest.mapper.ListingMapper;
 import ro.msg.mobile_clone.service.ListingService;
 import ro.msg.mobile_clone.service.UserService;
 

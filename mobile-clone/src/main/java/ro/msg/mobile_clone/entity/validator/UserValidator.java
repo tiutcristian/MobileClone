@@ -1,10 +1,10 @@
-package ro.msg.mobile_clone.model.validator;
+package ro.msg.mobile_clone.entity.validator;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
-import ro.msg.mobile_clone.model.entity.User;
-import ro.msg.mobile_clone.other.exceptions.UniqueFieldsViolationException;
+import ro.msg.mobile_clone.entity.User;
+import ro.msg.mobile_clone.exceptions.UniqueFieldsViolationException;
 import ro.msg.mobile_clone.repository.UserRepository;
 
 import java.util.HashSet;
