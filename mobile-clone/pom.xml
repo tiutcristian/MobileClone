@@ -102,10 +102,12 @@
 			<version>6.5.2.Final</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.10.3</version>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>

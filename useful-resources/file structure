@@ -1,0 +1,47 @@
+.
+├── converters
+│   └── LowercaseConverter.java
+├── dto
+│   ├── AuctionDto.java
+│   ├── BidDto.java
+│   ├── ListingDto.java
+│   └── UserDto.java
+├── entity
+│   ├── Auction.java
+│   ├── Bid.java
+│   ├── FuelType.java
+│   ├── Listing.java
+│   ├── Transmission.java
+│   ├── User.java
+│   └── validator
+│       ├── AuctionValidator.java
+│       ├── BidValidator.java
+│       └── UserValidator.java
+├── exceptions
+│   ├── EntityNotFoundException.java
+│   ├── InvalidEntityException.java
+│   └── UniqueFieldsViolationException.java
+├── repository
+│   ├── AuctionRepository.java
+│   ├── BidRepository.java
+│   ├── ListingRepository.java
+│   └── UserRepository.java
+├── rest
+│   ├── controller
+│   │   ├── AuctionController.java
+│   │   ├── BidController.java
+│   │   ├── ListingController.java
+│   │   └── UserController.java
+│   ├── exceptionHandler
+│   │   └── GlobalExceptionHandler.java
+│   └── mapper
+│       ├── AuctionMapper.java
+│       ├── BidMapper.java
+│       ├── ListingMapper.java
+│       └── UserMapper.java
+├── service
+│   ├── AuctionService.java
+│   ├── BidService.java
+│   ├── ListingService.java
+│   └── UserService.java
+└── MobileCloneApplication.java

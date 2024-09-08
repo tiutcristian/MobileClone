@@ -1,12 +1,13 @@
 package ro.msg.mobile_clone.service;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -27,20 +28,15 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Optional;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AuctionServiceTest {
-    @Mock
-    private AuctionRepository auctionRepository;
+@ExtendWith(MockitoExtension.class)
+class AuctionServiceTest {
 
-    @InjectMocks
-    private AuctionService auctionService;
+    @Mock AuctionRepository auctionRepository;
+    @InjectMocks AuctionService auctionService;
 
     private User user;
-
     private Listing listing;
-
     private Auction auction;
-
     private Pageable pageable;
 
     private void setUpUser() {
@@ -69,7 +65,8 @@ public class AuctionServiceTest {
         listing.setFuelType(FuelType.DIESEL);
     }
 
-    private void setUpAuction() {
+    @BeforeEach
+    void setUpAuction() {
         setUpListing();
 
         auction = new Auction();
@@ -82,95 +79,94 @@ public class AuctionServiceTest {
     }
 
     @Test
-    public void testStartAuctionValid() throws InvalidEntityException {
-        // setup
-        setUpAuction();
+    void testStartAuctionValid() {
         Mockito.when(auctionRepository.save(auction)).thenReturn(auction);
 
-        // act
-        Auction result = auctionService.startAuction(auction);
+        Auction result = null;
+        try {
+            result = auctionService.startAuction(auction);
+        } catch (InvalidEntityException e) {
+            Assertions.fail("InvalidEntityException thrown when it shouldn't have been.");
+        }
 
-        // assert
-        Assert.assertEquals(result, auction);
+        Assertions.assertEquals(result, auction);
     }
 
-    @Test(expected = InvalidEntityException.class)
-    public void testStartAuctionInvalid() throws InvalidEntityException {
-        // setup
-        setUpAuction();
+    @Test
+    void testStartAuctionInvalid() {
         auction.setWinner(user);
 
-        // act
-        auctionService.startAuction(auction);
+        Assertions.assertThrows(
+                InvalidEntityException.class,
+                () -> auctionService.startAuction(auction)
+        );
     }
 
-    @Test(expected = InvalidEntityException.class)
-    public void testStartAuctionInvalid2() throws InvalidEntityException {
-        // setup
-        setUpAuction();
+    @Test
+    void testStartAuctionInvalid2() {
         auction.setEndingTimestamp(Timestamp.from(Instant.now().minus(2, ChronoUnit.MINUTES)));
 
-        // act
-        auctionService.startAuction(auction);
+        Assertions.assertThrows(
+                InvalidEntityException.class,
+                () -> auctionService.startAuction(auction)
+        );
     }
 
     @Test
-    public void testGetAuctionByIdValid() throws EntityNotFoundException {
-        // setup
-        setUpAuction();
-        Mockito.when(auctionRepository.findById(1L)).thenReturn(Optional.of(auction));
+    void testGetAuctionByIdValid() {
+        Mockito.when(auctionRepository.findById(1L))
+                .thenReturn(Optional.of(auction));
 
-        // act
-        Auction result = auctionService.getAuctionById(1L);
+        Auction result = null;
+        try {
+            result = auctionService.getAuctionById(1L);
+        } catch (EntityNotFoundException e) {
+            Assertions.fail("EntityNotFoundException thrown incorrectly.");
+        }
 
-        // assert
-        Assert.assertEquals(result, auction);
-    }
-
-    @Test(expected = EntityNotFoundException.class)
-    public void testGetAuctionByIdInvalid() throws EntityNotFoundException {
-        // setup
-        setUpAuction();
-        Mockito.when(auctionRepository.findById(1L)).thenReturn(Optional.empty());
-
-        // act
-        auctionService.getAuctionById(1L);
+        Assertions.assertEquals(result, auction);
     }
 
     @Test
-    public void testDeleteAuctionValid() throws EntityNotFoundException {
-        // setup
-        setUpAuction();
-        Mockito.when(auctionRepository.findById(1L)).thenReturn(Optional.of(auction));
+    void testGetAuctionByIdInvalid() {
+        Mockito.when(auctionRepository.findById(1L))
+                .thenReturn(Optional.empty());
 
-        // act
-        auctionService.deleteAuction(1L);
+        Assertions.assertThrows(
+                EntityNotFoundException.class,
+                () -> auctionService.getAuctionById(1L)
+        );
+    }
 
-        // assert
+    @Test
+    void testDeleteAuctionValid() {
+        Mockito.when(auctionRepository.findById(1L))
+                .thenReturn(Optional.of(auction));
+
+        Assertions.assertDoesNotThrow(() -> auctionService.deleteAuction(1L));
+
         Mockito.verify(auctionRepository).delete(auction);
     }
 
-    @Test(expected = EntityNotFoundException.class)
-    public void testDeleteAuctionInvalid() throws EntityNotFoundException {
-        // setup
-        setUpAuction();
-        Mockito.when(auctionRepository.findById(1L)).thenReturn(Optional.empty());
+    @Test
+    void testDeleteAuctionInvalid() {
+        Mockito.when(auctionRepository.findById(1L))
+                .thenReturn(Optional.empty());
 
-        // act
-        auctionService.deleteAuction(1L);
+        Assertions.assertThrows(
+                EntityNotFoundException.class,
+                () -> auctionService.deleteAuction(1L)
+        );
     }
 
     @Test
-    public void testGetAllPaginated() {
-        // setup
-        setUpAuction();
+    void testGetAllPaginated() {
         setUpPageable();
-        Mockito.when(auctionRepository.findAll(pageable)).thenReturn(new PageImpl<>(Collections.singletonList(auction)));
+        Mockito.when(auctionRepository.findAll(pageable))
+                .thenReturn(new PageImpl<>(Collections.singletonList(auction)));
 
-        // act
         Page<Auction> result = auctionService.getAllPaginated(pageable);
 
-        // assert
-        Assert.assertEquals(result.getContent().getFirst(), auction);
+        Assertions.assertEquals(result.getContent().getFirst(), auction);
     }
 }
