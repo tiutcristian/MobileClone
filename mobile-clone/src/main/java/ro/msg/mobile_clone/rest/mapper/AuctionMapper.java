@@ -44,12 +44,14 @@ public interface AuctionMapper {
     }
 
     @Named("listingIdToListing")
-    default Listing listingIdToListing(Long listingId, @Context ListingService listingService) throws EntityNotFoundException {
+    default Listing listingIdToListing(Long listingId, @Context ListingService listingService)
+            throws EntityNotFoundException {
         return listingService.getListingById(listingId);
     }
 
     @Named("winnerIdToUser")
-    default User winnerIdToUser(Long winnerId, @Context UserService userService) throws EntityNotFoundException {
+    default User winnerIdToUser(Long winnerId, @Context UserService userService)
+            throws EntityNotFoundException {
         if (winnerId == null) {
             return null;
         }
