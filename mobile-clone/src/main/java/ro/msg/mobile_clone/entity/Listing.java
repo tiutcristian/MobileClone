@@ -1,7 +1,7 @@
 package ro.msg.mobile_clone.entity;
 
 import jakarta.persistence.*;
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.Year;
@@ -44,6 +44,7 @@ public class Listing {
 
     @NotNull(message = "Year is mandatory")
     @PastOrPresent(message = "Year must be in the past")
+    @Column(name = "manufacture_year")
     private Year year;
 
     @NotNull(message = "Mileage is mandatory")

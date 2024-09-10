@@ -2,6 +2,7 @@ package ro.msg.mobile_clone.entity.validator;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Component;
 import ro.msg.mobile_clone.entity.User;
 import ro.msg.mobile_clone.exceptions.UniqueFieldsViolationException;
@@ -27,13 +28,21 @@ public class UserValidator {
 
         Set<String> problematicFields = new HashSet<>();
 
-        User userByEmail = userRepository.findByEmail(user.getEmail());
-        if (userByEmail != null && !Objects.equals(userByEmail.getId(), user.getId())) {
+        try {
+            User userByEmail = userRepository.findByEmail(user.getEmail());
+            if (userByEmail != null && !Objects.equals(userByEmail.getId(), user.getId())) {
+                problematicFields.add("email");
+            }
+        } catch (IncorrectResultSizeDataAccessException e) {
             problematicFields.add("email");
         }
 
-        User userByPhone = userRepository.findByPhone(user.getPhone());
-        if (userByPhone != null && !Objects.equals(userByPhone.getId(), user.getId())) {
+        try {
+            User userByPhone = userRepository.findByPhone(user.getPhone());
+            if (userByPhone != null && !Objects.equals(userByPhone.getId(), user.getId())) {
+                problematicFields.add("phone");
+            }
+        } catch (IncorrectResultSizeDataAccessException e) {
             problematicFields.add("phone");
         }
 

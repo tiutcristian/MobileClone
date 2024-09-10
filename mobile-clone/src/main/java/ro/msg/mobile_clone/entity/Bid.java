@@ -3,7 +3,7 @@ package ro.msg.mobile_clone.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "bids")

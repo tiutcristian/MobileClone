@@ -1,12 +1,13 @@
 package ro.msg.mobile_clone.rest.exceptionHandler;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import ro.msg.mobile_clone.exceptions.EntityNotFoundException;
 import ro.msg.mobile_clone.exceptions.InvalidEntityException;
 import ro.msg.mobile_clone.exceptions.UniqueFieldsViolationException;
 
@@ -53,6 +54,12 @@ public class GlobalExceptionHandler {
                         String.join("\n\t", errors),
                 HttpStatus.BAD_REQUEST
         );
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException e) {
+        log.error("Entity not found error: {}", e.getMessage());
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
 
