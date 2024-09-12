@@ -1,5 +1,6 @@
 package ro.msg.mobile_clone.rest.controller;
 
+import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -14,6 +15,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import ro.msg.mobile_clone.MobileCloneApplication;
 
 @SpringBootTest
@@ -25,6 +28,17 @@ public class ListingControllerIT {
     MockMvc mockMvc;
 
     private static final String BASE_URL = "/api/v1/listings";
+
+    @Autowired
+    private WebApplicationContext context;
+
+    @PostConstruct
+    public void setup() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .alwaysDo(result -> result.getRequest().addHeader("x-api-key", "test123"))
+                .build();
+    }
 
     @BeforeEach
     public void setUp() throws Exception {

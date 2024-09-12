@@ -1,5 +1,6 @@
 package ro.msg.mobile_clone.rest.controller;
 
+import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,12 +25,12 @@ public class UserControllerIT {
     @Autowired
     private MockMvc mockMvc;
 
+    private static final String BASE_URL = "/api/v1/users";
+
     @Autowired
     private WebApplicationContext context;
 
-    private static final String BASE_URL = "/api/v1/users";
-
-    @BeforeEach
+    @PostConstruct
     public void setup() {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)

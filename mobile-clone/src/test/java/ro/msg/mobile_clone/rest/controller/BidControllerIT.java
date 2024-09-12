@@ -1,5 +1,8 @@
 package ro.msg.mobile_clone.rest.controller;
 
+import jakarta.annotation.PostConstruct;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import ro.msg.mobile_clone.MobileCloneApplication;
 
 @SpringBootTest
@@ -21,6 +26,17 @@ public class BidControllerIT {
 
     private static final String BASE_URL = "/api/v1/bids";
 
+    @Autowired
+    private WebApplicationContext context;
+
+    @PostConstruct
+    public void setup() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .alwaysDo(result -> result.getRequest().addHeader("x-api-key", "test123"))
+                .build();
+    }
+
     // create bid
         // uses create auction
             // uses create listing
@@ -29,6 +45,13 @@ public class BidControllerIT {
     private void createUser() {
 
     }
+
+    @Test
+    public void createBid() {
+
+    }
+
+
 
     // get all bids paginated by auction
 
