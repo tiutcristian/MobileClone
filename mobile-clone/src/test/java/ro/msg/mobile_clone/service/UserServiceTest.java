@@ -69,8 +69,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testCreateUserThrowsUniqueFieldsViolationException()
-            throws UniqueFieldsViolationException { // TODO remove throws
+    void testCreateUserThrowsUniqueFieldsViolationException() throws UniqueFieldsViolationException {
 
         Mockito.doThrow(new UniqueFieldsViolationException(User.class, Set.of("email")))
                 .when(userValidator).validateUser(user);
@@ -145,8 +144,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testUpdateUserThrowsUniqueFieldsViolationException()
-            throws UniqueFieldsViolationException { // TODO remove throws
+    void testUpdateUserThrowsUniqueFieldsViolationException() throws UniqueFieldsViolationException {
         setupUser2();
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         Mockito.doThrow(new UniqueFieldsViolationException(User.class, Set.of("email")))

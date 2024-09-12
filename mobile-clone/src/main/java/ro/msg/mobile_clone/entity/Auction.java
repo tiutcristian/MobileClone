@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+
 import java.sql.Timestamp;
 import java.util.Set;
 
@@ -45,5 +49,8 @@ public class Auction {
     @ToString.Exclude
     private Set<Bid> bids;
 
-    private boolean active = true;
+    private boolean active;
+    @PrePersist void initActive() {
+        this.active = true;
+    }
 }

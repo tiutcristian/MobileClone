@@ -1,43 +1,31 @@
 package ro.msg.mobile_clone.rest.controller;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import ro.msg.mobile_clone.MobileCloneApplication;
 
-@ExtendWith(SpringExtension.class)
-@ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@AutoConfigureMockMvc
-@EnableConfigurationProperties
+@SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc(addFilters = false)
 public class UserControllerIT {
 
     @Autowired
-    private WebApplicationContext webApplicationContext;
-
     private MockMvc mockMvc;
-
-    @BeforeEach
-    public void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
-    }
 
     private static final String BASE_URL = "/api/v1/users";
 
@@ -59,12 +47,14 @@ public class UserControllerIT {
     public void testCreateUser() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{" +
-                                "\"firstName\": \"Cristian\"," +
-                                "\"lastName\": \"Tiut\"," +
-                                "\"email\": \"tiutcristian@gmail.com\"," +
-                                "\"phone\": \"0721644423\"" +
-                                "}")
+                        .content("""
+                                {\
+                                "firstName": "Cristian",\
+                                "lastName": "Tiut",\
+                                "email": "tiutcristian@gmail.com",\
+                                "phone": "0721644423"\
+                                }""")
+//                        .header("x-api-key", "test123")
                 )
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.header().exists("Location"))
@@ -80,11 +70,12 @@ public class UserControllerIT {
     public void testCreateUserMissingEmail() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{" +
-                                "\"firstName\": \"Alice\"," +
-                                "\"lastName\": \"Smith\"," +
-                                "\"phone\": \"0731567890\"" +
-                                "}")
+                        .content("""
+                                {\
+                                "firstName": "Alice",\
+                                "lastName": "Smith",\
+                                "phone": "0731567890"\
+                                }""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -94,12 +85,13 @@ public class UserControllerIT {
         createUser("Cristian", "Tiut", "cv@sth.com", "0721644423");
         mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{" +
-                                "\"firstName\": \"John\"," +
-                                "\"lastName\": \"Doe\"," +
-                                "\"email\": \"john@doe.com\"," +
-                                "\"phone\": \"0721644423\"" +
-                                "}")
+                        .content("""
+                                {\
+                                "firstName": "John",\
+                                "lastName": "Doe",\
+                                "email": "john@doe.com",\
+                                "phone": "0721644423"\
+                                }""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -160,12 +152,13 @@ public class UserControllerIT {
         // updating the user with id 2
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/2")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{" +
-                                "\"firstName\": \"John\"," +
-                                "\"lastName\": \"Doe\"," +
-                                "\"email\": \"alice.smith@example.com\"," +
-                                "\"phone\": \"0731567890\"" +
-                                "}")
+                        .content("""
+                                {\
+                                "firstName": "John",\
+                                "lastName": "Doe",\
+                                "email": "alice.smith@example.com",\
+                                "phone": "0731567890"\
+                                }""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().exists("Location"))
@@ -194,11 +187,12 @@ public class UserControllerIT {
         // updating the user with id 2
         this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/2")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{" +
-                                "\"firstName\": \"John\"," +
-                                "\"lastName\": \"Doe\"," +
-                                "\"phone\": \"0731567890\"" +
-                                "}")
+                        .content("""
+                                {\
+                                "firstName": "John",\
+                                "lastName": "Doe",\
+                                "phone": "0731567890"\
+                                }""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -212,13 +206,14 @@ public class UserControllerIT {
         // updating the user with id 2
         this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/2")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{" +
-                                "\"id\": 2," +
-                                "\"firstName\": \"John\"," +
-                                "\"lastName\": \"Doe\"," +
-                                "\"email\": \"alice.smith@example.com\"," +
-                                "\"phone\": \"0721644423\"" +
-                                "}")
+                        .content("""
+                                {\
+                                "id": 2,\
+                                "firstName": "John",\
+                                "lastName": "Doe",\
+                                "email": "alice.smith@example.com",\
+                                "phone": "0721644423"\
+                                }""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
