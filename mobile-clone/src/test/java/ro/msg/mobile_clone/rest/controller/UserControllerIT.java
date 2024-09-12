@@ -2,7 +2,6 @@ package ro.msg.mobile_clone.rest.controller;
 
 import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
