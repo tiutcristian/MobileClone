@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.sql.Timestamp;
 import java.util.Set;
