@@ -23,7 +23,7 @@ public class Auction {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     @JoinColumn(name = "listing_id", nullable = false)
     @NotNull(message = "Listing is mandatory")
