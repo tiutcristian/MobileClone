@@ -1,3 +1,0 @@
-POST = 201 + location header + body(created entity's DTO)
-PUT = 200 + location header
-DELETE = 200
