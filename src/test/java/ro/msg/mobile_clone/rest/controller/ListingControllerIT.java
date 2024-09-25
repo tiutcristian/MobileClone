@@ -9,10 +9,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -29,8 +30,7 @@ public class ListingControllerIT {
 
     @PostConstruct
     public void setup() {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
+        mockMvc = webAppContextSetup(context)
                 .alwaysDo(result -> result.getRequest().addHeader("x-api-key", "test123"))
                 .build();
     }
@@ -38,21 +38,21 @@ public class ListingControllerIT {
     @BeforeEach
     public void setUp() throws Exception {
         // create a user
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/create")
+        this.mockMvc.perform(post("/api/v1/users/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {\
                             "firstName": "Cristian",\
                             "lastName": "Tiut",\
                             "email": "tiutcristian@gmail.com",\
-                            "phone": "0721644423"\
+                            "phone": "0721644423"
                         }""")
         );
     }
 
     @Test
     public void testCreateListing() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {\
@@ -67,17 +67,17 @@ public class ListingControllerIT {
                             "engineSize": 2000,\
                             "horsepower": 100,\
                             "transmission": "MANUAL",\
-                            "fuelType": "PETROL"\
+                            "fuelType": "PETROL"
                         }""")
                 )
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.header().exists("Location"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.userId").value(1));
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"))
+                .andExpect(jsonPath("$.userId").value(1));
     }
 
     @Test
     public void testCreateListingWithInvalidUserId() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
 
@@ -93,15 +93,15 @@ public class ListingControllerIT {
                             "engineSize": 2000,\
                             "horsepower": 100,\
                             "transmission": "MANUAL",\
-                            "fuelType": "PETROL"\
+                            "fuelType": "PETROL"
                         }""")
                 )
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void testCreateListingWithInvalidTransmission() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {\
@@ -116,15 +116,15 @@ public class ListingControllerIT {
                             "engineSize": 2000,\
                             "horsepower": 100,\
                             "transmission": "INVALID",\
-                            "fuelType": "PETROL"\
+                            "fuelType": "PETROL"
                         }""")
                 )
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError());
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
     public void testCreateListingWithInvalidPrice() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {\
@@ -139,10 +139,10 @@ public class ListingControllerIT {
                         "engineSize": 2000,\
                         "horsepower": 100,\
                         "transmission": "MANUAL",\
-                        "fuelType": "PETROL"\
+                        "fuelType": "PETROL"
                         }""")
                 )
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -150,41 +150,40 @@ public class ListingControllerIT {
         for (int i = 0; i < 6; i++) {
             testCreateListing();
         }
-        this.mockMvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL)
+        this.mockMvc.perform(get(BASE_URL)
                         .param("page", "0")
                         .param("size", "5")
                 )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content").isArray())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].id").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].id").value(2))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[2].id").value(3))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[3].id").value(4))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[4].id").value(5))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[5]").doesNotExist());
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[1].id").value(2))
+                .andExpect(jsonPath("$.content[2].id").value(3))
+                .andExpect(jsonPath("$.content[3].id").value(4))
+                .andExpect(jsonPath("$.content[4].id").value(5))
+                .andExpect(jsonPath("$.content[5]").doesNotExist());
     }
 
     @Test
     public void testGetListingById() throws Exception {
         testCreateListing();
-        this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/1"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1));
+        this.mockMvc.perform(get(BASE_URL + "/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1));
     }
 
     @Test
     public void testGetListingByIdWithInvalidId() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/1"))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        this.mockMvc.perform(get(BASE_URL + "/1"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void testUpdateListing() throws Exception {
         testCreateListing();
-        this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/1")
+        this.mockMvc.perform(put(BASE_URL + "/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {\
@@ -200,15 +199,15 @@ public class ListingControllerIT {
                             "engineSize": 2000,\
                             "horsepower": 100,\
                             "transmission": "MANUAL",\
-                            "fuelType": "PETROL"\
+                            "fuelType": "PETROL"
                         }""")
                 )
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testUpdateListingWithInvalidId() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/2")
+        this.mockMvc.perform(put(BASE_URL + "/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {\
@@ -224,23 +223,23 @@ public class ListingControllerIT {
                             "engineSize": 2000,\
                             "horsepower": 100,\
                             "transmission": "MANUAL",\
-                            "fuelType": "PETROL"\
+                            "fuelType": "PETROL"
                             }""")
         )
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
+        .andExpect(status().isNotFound());
     }
 
     @Test
     public void testDeleteListing() throws Exception {
         testCreateListing();
-        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/1"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+        this.mockMvc.perform(delete(BASE_URL + "/1"))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testDeleteListingWithInvalidId() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/1"))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        this.mockMvc.perform(delete(BASE_URL + "/1"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -248,7 +247,7 @@ public class ListingControllerIT {
         testCreateListing();
         testCreateListing();
         testCreateListing();
-        this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/search")
+        this.mockMvc.perform(get(BASE_URL + "/search")
                 .param("make", "Toyota")
                 .param("model", "Auris")
                 .param("mileage", "2000000")
@@ -259,9 +258,9 @@ public class ListingControllerIT {
                 .param("page", "0")
                 .param("size", "5")
         )
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.content").isArray())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].id").value(1));
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.content").isArray())
+        .andExpect(jsonPath("$.content[0].id").value(1));
     }
 }

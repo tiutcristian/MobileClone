@@ -10,10 +10,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 
 @SpringBootTest
@@ -40,7 +41,7 @@ public class UserControllerIT {
     private void createUser(String firstName, String lastName, String email, String phone)
             throws Exception {
 
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{" +
                         "\"firstName\": \"" + firstName + "\"," +
@@ -53,14 +54,14 @@ public class UserControllerIT {
 
     @Test
     public void testCreateUser() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {\
-                                "firstName": "Cristian",\
-                                "lastName": "Tiut",\
-                                "email": "tiutcristian@gmail.com",\
-                                "phone": "0721644423"\
+                                {
+                                "firstName": "Cristian",
+                                "lastName": "Tiut",
+                                "email": "tiutcristian@gmail.com",
+                                "phone": "0721644423"
                                 }""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -75,13 +76,13 @@ public class UserControllerIT {
 
     @Test
     public void testCreateUserMissingEmail() throws Exception {
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {\
-                                "firstName": "Alice",\
-                                "lastName": "Smith",\
-                                "phone": "0731567890"\
+                                {
+                                "firstName": "Alice",
+                                "lastName": "Smith",
+                                "phone": "0731567890"
                                 }""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -90,14 +91,14 @@ public class UserControllerIT {
     @Test
     public void testCreateUserRepeatedPhone() throws Exception {
         createUser("Cristian", "Tiut", "cv@sth.com", "0721644423");
-        mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {\
-                                "firstName": "John",\
-                                "lastName": "Doe",\
-                                "email": "john@doe.com",\
-                                "phone": "0721644423"\
+                                {
+                                "firstName": "John",
+                                "lastName": "Doe",
+                                "email": "john@doe.com",
+                                "phone": "0721644423"
                                 }""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -113,8 +114,7 @@ public class UserControllerIT {
         createUser("Michael", "Brown", "michael.brown@example.com", "0750987654");
         createUser("Sophia", "Davis", "sophia.davis@example.com", "0763456789");
 
-        this.mockMvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL)
+        this.mockMvc.perform(get(BASE_URL)
                         .param("page", "0")
                         .param("size", "5"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -143,7 +143,7 @@ public class UserControllerIT {
         createUser("Michael", "Brown", "michael.brown@example.com", "0750987654");
         createUser("Sophia", "Davis", "sophia.davis@example.com", "0763456789");
 
-        this.mockMvc.perform(MockMvcRequestBuilders.get(location))
+        this.mockMvc.perform(get(location))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.phone").value("0721644423"));
@@ -157,14 +157,14 @@ public class UserControllerIT {
         createUser("Alice", "Smith", "alice.smith@example.com", "0731567890");
 
         // updating the user with id 2
-        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/2")
+        MvcResult result = this.mockMvc.perform(put(BASE_URL + "/2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {\
-                                "firstName": "John",\
-                                "lastName": "Doe",\
-                                "email": "alice.smith@example.com",\
-                                "phone": "0731567890"\
+                                {
+                                "firstName": "John",
+                                "lastName": "Doe",
+                                "email": "alice.smith@example.com",
+                                "phone": "0731567890"
                                 }""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -176,7 +176,7 @@ public class UserControllerIT {
         Assertions.assertNotNull(location);
 
         // checking the updated user
-        this.mockMvc.perform(MockMvcRequestBuilders.get(location))
+        this.mockMvc.perform(get(location))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("John"))
@@ -192,13 +192,13 @@ public class UserControllerIT {
         createUser("Alice", "Smith", "alice.smith@example.com", "0731567890");
 
         // updating the user with id 2
-        this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/2")
+        this.mockMvc.perform(put(BASE_URL + "/2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {\
-                                "firstName": "John",\
-                                "lastName": "Doe",\
-                                "phone": "0731567890"\
+                                {
+                                "firstName": "John",
+                                "lastName": "Doe",
+                                "phone": "0731567890"
                                 }""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -211,15 +211,15 @@ public class UserControllerIT {
         createUser("Alice", "Smith", "alice.smith@example.com", "0731567890");
 
         // updating the user with id 2
-        this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/2")
+        this.mockMvc.perform(put(BASE_URL + "/2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {\
-                                "id": 2,\
-                                "firstName": "John",\
-                                "lastName": "Doe",\
-                                "email": "alice.smith@example.com",\
-                                "phone": "0721644423"\
+                                {
+                                "id": 2,
+                                "firstName": "John",
+                                "lastName": "Doe",
+                                "email": "alice.smith@example.com",
+                                "phone": "0721644423"
                                 }""")
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
@@ -232,11 +232,11 @@ public class UserControllerIT {
         createUser("Alice", "Smith", "alice.smith@example.com", "0731567890");
 
         // deleting the user with id 2
-        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/2"))
+        this.mockMvc.perform(delete(BASE_URL + "/2"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         // checking if the user was deleted
-        this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/2"))
+        this.mockMvc.perform(get(BASE_URL + "/2"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -247,7 +247,7 @@ public class UserControllerIT {
         createUser("Alice", "Smith", "alice.smith@example.com", "0731567890");
 
         // trying to delete a non-existent user
-        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/3"))
+        this.mockMvc.perform(delete(BASE_URL + "/3"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 }

@@ -1,11 +1,9 @@
 package ro.msg.mobile_clone.entity.validator;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ro.msg.mobile_clone.entity.*;
 import ro.msg.mobile_clone.exceptions.InvalidEntityException;
@@ -14,6 +12,11 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.Year;
 import java.time.temporal.ChronoUnit;
+
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 public class BidValidatorTest {
@@ -63,30 +66,30 @@ public class BidValidatorTest {
 
     @BeforeEach
     void setup() {
-        Mockito.when(user.getId()).thenReturn(1L);
-        Mockito.when(bidder.getId()).thenReturn(2L);
+        when(user.getId()).thenReturn(1L);
+        when(bidder.getId()).thenReturn(2L);
         setUpBid();
     }
 
     @Test
     void testValidateBidValid() {
-        Mockito.when(user.getId()).thenReturn(1L);
-        Mockito.when(bidder.getId()).thenReturn(2L);
+        when(user.getId()).thenReturn(1L);
+        when(bidder.getId()).thenReturn(2L);
 
         try {
             BidValidator.validateBid(bid);
         } catch (InvalidEntityException e) {
-            Assertions.fail("Bid should be valid");
+            fail("Bid should be valid");
         }
     }
 
     @Test
     void testValidateBidOfferLessThanPrice() {
-        Mockito.when(user.getId()).thenReturn(1L);
-        Mockito.when(bidder.getId()).thenReturn(2L);
+        when(user.getId()).thenReturn(1L);
+        when(bidder.getId()).thenReturn(2L);
         bid.setOffer(999.0);
 
-        Assertions.assertThrows(
+        assertThrows(
                 InvalidEntityException.class,
                 () -> BidValidator.validateBid(bid)
         );
@@ -94,15 +97,15 @@ public class BidValidatorTest {
 
     @Test
     void testValidateBidAuctionEnded() {
-        Mockito.when(user.getId()).thenReturn(1L);
-        Mockito.when(bidder.getId()).thenReturn(2L);
+        when(user.getId()).thenReturn(1L);
+        when(bidder.getId()).thenReturn(2L);
         auction.setEndingTimestamp(
                 Timestamp.from(
                         Instant.now().minus(1, ChronoUnit.MINUTES)
                 )
         );
 
-        Assertions.assertThrows(
+        assertThrows(
                 InvalidEntityException.class,
                 () -> BidValidator.validateBid(bid)
         );
@@ -110,9 +113,9 @@ public class BidValidatorTest {
 
     @Test
     void testValidateBidSellerBid() {
-        Mockito.when(bidder.getId()).thenReturn(1L);
+        when(bidder.getId()).thenReturn(1L);
 
-        Assertions.assertThrows(
+        assertThrows(
                 InvalidEntityException.class,
                 () -> BidValidator.validateBid(bid)
         );

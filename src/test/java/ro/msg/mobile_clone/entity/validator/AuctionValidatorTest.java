@@ -1,6 +1,5 @@
 package ro.msg.mobile_clone.entity.validator;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +11,10 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.Year;
 import java.time.temporal.ChronoUnit;
+
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 @ExtendWith(MockitoExtension.class)
 class AuctionValidatorTest {
@@ -60,7 +63,7 @@ class AuctionValidatorTest {
         try {
             AuctionValidator.validateCreatedAuction(auction);
         } catch (InvalidEntityException e) {
-            Assertions.fail("Auction should be valid");
+            fail("Auction should be valid");
         }
     }
 
@@ -68,7 +71,7 @@ class AuctionValidatorTest {
     void testValidateCreatedAuctionWinnerNotNull() {
         auction.setWinner(new User());
 
-        Assertions.assertThrows(
+        assertThrows(
                 InvalidEntityException.class,
                 () -> AuctionValidator.validateCreatedAuction(auction)
         );
@@ -78,7 +81,7 @@ class AuctionValidatorTest {
     void testValidateCreatedAuctionEndingTimestampBeforeNow() {
         auction.setEndingTimestamp(Timestamp.from(Instant.now().minus(1, ChronoUnit.MINUTES)));
 
-        Assertions.assertThrows(
+        assertThrows(
                 InvalidEntityException.class,
                 () -> AuctionValidator.validateCreatedAuction(auction)
         );

@@ -9,12 +9,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.Instant;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -31,27 +32,26 @@ public class AuctionControllerIT {
 
     @PostConstruct
     public void setup() {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
+        mockMvc = webAppContextSetup(context)
                 .alwaysDo(result -> result.getRequest().addHeader("x-api-key", "test123"))
                 .build();
     }
 
     private void createUserAndListing() throws Exception {
         // create user
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users/create")
+        mockMvc.perform(post("/api/v1/users/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                                 {\
                                 "firstName": "Cristian",\
                                 "lastName": "Tiut",\
                                 "email": "tiutcristian@gmail.com",\
-                                "phone": "0721644423"\
+                                "phone": "0721644423"
                                 }""")
         );
 
         // create listing
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/listings/create")
+        mockMvc.perform(post("/api/v1/listings/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {\
@@ -66,7 +66,7 @@ public class AuctionControllerIT {
                             "engineSize": 2000,\
                             "horsepower": 100,\
                             "transmission": "MANUAL",\
-                            "fuelType": "PETROL"\
+                            "fuelType": "PETROL"
                         }""")
         );
     }
@@ -86,19 +86,19 @@ public class AuctionControllerIT {
         jsonObject.put("endingTimestamp", deadline);
 
         // create auction
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonObject.toString())
                 )
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.header().exists("Location"))
-                .andExpect(MockMvcResultMatchers.header().string("Location", "/api/v1/auctions/1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.listingId").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.endingTimestamp")
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"))
+                .andExpect(header().string("Location", "/api/v1/auctions/1"))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.listingId").value(1))
+                .andExpect(jsonPath("$.endingTimestamp")
                         .value(deadline + ".000+00:00"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.winnerId").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.active").value(true));
+                .andExpect(jsonPath("$.winnerId").isEmpty())
+                .andExpect(jsonPath("$.active").value(true));
 
     }
 
@@ -115,11 +115,11 @@ public class AuctionControllerIT {
         jsonObject.put("endingTimestamp", deadline);
 
         // create auction
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonObject.toString())
                 )
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -136,11 +136,11 @@ public class AuctionControllerIT {
         jsonObject.put("endingTimestamp", deadline);
 
         // create auction
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonObject.toString())
                 )
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     // get all auctions
@@ -158,23 +158,23 @@ public class AuctionControllerIT {
         jsonObject.put("endingTimestamp", deadline);
 
         // create auction
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonObject.toString())
                 )
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(status().isCreated());
 
         // get all auctions
-        this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL)
+        this.mockMvc.perform(get(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].id").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].listingId").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].endingTimestamp")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[0].listingId").value(1))
+                .andExpect(jsonPath("$.content[0].endingTimestamp")
                         .value(deadline + ".000+00:00"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].winnerId").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].active").value(true));
+                .andExpect(jsonPath("$.content[0].winnerId").isEmpty())
+                .andExpect(jsonPath("$.content[0].active").value(true));
     }
 
     // get auction by id
@@ -192,32 +192,32 @@ public class AuctionControllerIT {
         jsonObject.put("endingTimestamp", deadline);
 
         // create auction
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonObject.toString())
                 )
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(status().isCreated());
 
         // get auction by id
-        this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/1")
+        this.mockMvc.perform(get(BASE_URL + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.listingId").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.endingTimestamp")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.listingId").value(1))
+                .andExpect(jsonPath("$.endingTimestamp")
                         .value(deadline + ".000+00:00"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.winnerId").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.active").value(true));
+                .andExpect(jsonPath("$.winnerId").isEmpty())
+                .andExpect(jsonPath("$.active").value(true));
     }
 
     @Test
     public void testGetAuctionByIdInvalidId() throws Exception {
         // get auction by id
-        this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/1")
+        this.mockMvc.perform(get(BASE_URL + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 
     // delete auction by id
@@ -235,25 +235,25 @@ public class AuctionControllerIT {
         jsonObject.put("endingTimestamp", deadline);
 
         // create auction
-        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL + "/create")
+        this.mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonObject.toString())
                 )
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(status().isCreated());
 
         // delete auction by id
-        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/1")
+        this.mockMvc.perform(delete(BASE_URL + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testDeleteAuctionByIdInvalidId() throws Exception {
         // delete auction by id
-        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/1")
+        this.mockMvc.perform(delete(BASE_URL + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 }

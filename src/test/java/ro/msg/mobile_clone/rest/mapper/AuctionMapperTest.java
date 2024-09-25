@@ -1,10 +1,8 @@
 package ro.msg.mobile_clone.rest.mapper;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ro.msg.mobile_clone.dto.AuctionDto;
 import ro.msg.mobile_clone.entity.Auction;
@@ -15,6 +13,10 @@ import ro.msg.mobile_clone.service.ListingService;
 import ro.msg.mobile_clone.service.UserService;
 
 import java.sql.Timestamp;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AuctionMapperTest {
@@ -37,17 +39,17 @@ public class AuctionMapperTest {
     }
 
     private void setupAuction() {
-        Listing listing = Mockito.mock(Listing.class);
-        User winner = Mockito.mock(User.class);
+        Listing listing = mock(Listing.class);
+        User winner = mock(User.class);
 
-        Mockito.when(auction.getListing()).thenReturn(listing);
-        Mockito.when(auction.getWinner()).thenReturn(winner);
-        Mockito.when(auction.getEndingTimestamp()).thenReturn(endingTimestamp);
-        Mockito.when(auction.isActive()).thenReturn(false);
+        when(auction.getListing()).thenReturn(listing);
+        when(auction.getWinner()).thenReturn(winner);
+        when(auction.getEndingTimestamp()).thenReturn(endingTimestamp);
+        when(auction.isActive()).thenReturn(false);
 
-        Mockito.when(auction.getId()).thenReturn(1L);
-        Mockito.when(listing.getId()).thenReturn(2L);
-        Mockito.when(winner.getId()).thenReturn(3L);
+        when(auction.getId()).thenReturn(1L);
+        when(listing.getId()).thenReturn(2L);
+        when(winner.getId()).thenReturn(3L);
     }
 
     @Test
@@ -56,31 +58,31 @@ public class AuctionMapperTest {
 
         AuctionDto auctionDto = AuctionMapper.INSTANCE.mapToAuctionDto(auction);
 
-        Assertions.assertEquals(1L, auctionDto.id());
-        Assertions.assertEquals(2L, auctionDto.listingId());
-        Assertions.assertEquals(endingTimestamp, auctionDto.endingTimestamp());
-        Assertions.assertEquals(3L, auctionDto.winnerId());
-        Assertions.assertFalse(auctionDto.active());
+        assertEquals(1L, auctionDto.id());
+        assertEquals(2L, auctionDto.listingId());
+        assertEquals(endingTimestamp, auctionDto.endingTimestamp());
+        assertEquals(3L, auctionDto.winnerId());
+        assertFalse(auctionDto.active());
     }
 
     @Test
     public void testMapToAuction() {
         setupAuctionDto();
-        Listing listing = Mockito.mock(Listing.class);
-        User winner = Mockito.mock(User.class);
+        Listing listing = mock(Listing.class);
+        User winner = mock(User.class);
 
         Auction result = null;
         try {
-            Mockito.when(listingService.getListingById(2L)).thenReturn(listing);
-            Mockito.when(userService.getUserById(3L)).thenReturn(winner);
+            when(listingService.getListingById(2L)).thenReturn(listing);
+            when(userService.getUserById(3L)).thenReturn(winner);
             result = AuctionMapper.INSTANCE.mapToAuction(auctionDto, listingService, userService);
         } catch (EntityNotFoundException e) {
-            Assertions.fail("Entity should be found");
+            fail("Entity should be found");
         }
 
-        Assertions.assertEquals(listing, result.getListing());
-        Assertions.assertEquals(endingTimestamp, result.getEndingTimestamp());
-        Assertions.assertEquals(winner, result.getWinner());
-        Assertions.assertFalse(result.isActive());
+        assertEquals(listing, result.getListing());
+        assertEquals(endingTimestamp, result.getEndingTimestamp());
+        assertEquals(winner, result.getWinner());
+        assertFalse(result.isActive());
     }
 }

@@ -1,6 +1,5 @@
 package ro.msg.mobile_clone.service;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +22,10 @@ import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BidServiceTest {
@@ -97,35 +100,35 @@ public class BidServiceTest {
 
     @Test
     void testPlaceBid() {
-        Mockito.when(bidRepository.save(bid)).thenReturn(bid);
+        when(bidRepository.save(bid)).thenReturn(bid);
 
         Bid result = null;
-        try (MockedStatic<BidValidator> mockingStatic = Mockito.mockStatic(BidValidator.class)) {
-            mockingStatic.when(() -> BidValidator.validateBid(Mockito.any()))
+        try (MockedStatic<BidValidator> mockingStatic = mockStatic(BidValidator.class)) {
+            mockingStatic.when(() -> BidValidator.validateBid(any()))
                     .then(i -> true);
 
             try {
                 result = bidService.placeBid(bid);
             } catch (InvalidEntityException e) {
-                Assertions.fail("InvalidEntityException thrown when it shouldn't have been.");
+                fail("InvalidEntityException thrown when it shouldn't have been.");
             }
         }
 
-        Assertions.assertEquals(result, bid);
+        assertEquals(result, bid);
     }
 
     @Test
     void testPlaceBidInvalid() {
         bid.setOffer(-200.0);
 
-        try (MockedStatic<BidValidator> mockingStatic = Mockito.mockStatic(BidValidator.class)) {
-            mockingStatic.when(() -> BidValidator.validateBid(Mockito.any()))
+        try (MockedStatic<BidValidator> mockingStatic = mockStatic(BidValidator.class)) {
+            mockingStatic.when(() -> BidValidator.validateBid(any()))
                     .thenThrow(new InvalidEntityException(
                             Bid.class,
                             Set.of("Offer must be at least the listing price")
                     ));
 
-            Assertions.assertThrows(
+            assertThrows(
                     InvalidEntityException.class,
                     () -> bidService.placeBid(bid)
             );
@@ -134,23 +137,23 @@ public class BidServiceTest {
 
     @Test
     void testGetBidById() {
-        Mockito.when(bidRepository.findById(1L)).thenReturn(java.util.Optional.of(bid));
+        when(bidRepository.findById(1L)).thenReturn(java.util.Optional.of(bid));
 
         Bid result = null;
         try {
             result = bidService.getBidById(1L);
         } catch (EntityNotFoundException e) {
-            Assertions.fail("EntityNotFoundException thrown incorrectly.");
+            fail("EntityNotFoundException thrown incorrectly.");
         }
 
-        Assertions.assertEquals(result, bid);
+        assertEquals(result, bid);
     }
 
     @Test
     void testGetBidByIdNotFound() {
-        Mockito.when(bidRepository.findById(1L)).thenReturn(java.util.Optional.empty());
+        when(bidRepository.findById(1L)).thenReturn(java.util.Optional.empty());
 
-        Assertions.assertThrows(
+        assertThrows(
                 EntityNotFoundException.class,
                 () -> bidService.getBidById(1L)
         );
@@ -159,26 +162,26 @@ public class BidServiceTest {
     @Test
     void testGetPaginatedBidsByAuction() {
         setUpPageable();
-        Mockito.when(auctionRepository.findById(1L)).thenReturn(java.util.Optional.of(auction));
-        Mockito.when(bidRepository.findBidsByAuction(pageable, auction))
+        when(auctionRepository.findById(1L)).thenReturn(java.util.Optional.of(auction));
+        when(bidRepository.findBidsByAuction(pageable, auction))
                 .thenReturn(new PageImpl<>(Collections.singletonList(bid)));
 
         Page<Bid> result = null;
         try {
             result = bidService.getPaginatedBidsByAuction(1L, pageable);
         } catch (EntityNotFoundException e) {
-            Assertions.fail("EntityNotFoundException thrown incorrectly.");
+            fail("EntityNotFoundException thrown incorrectly.");
         }
 
-        Assertions.assertEquals(result.getContent().getFirst(), bid);
+        assertEquals(result.getContent().getFirst(), bid);
     }
 
     @Test
     void testGetPaginatedBidsByAuctionNotFound() {
         setUpPageable();
-        Mockito.when(auctionRepository.findById(1L)).thenReturn(java.util.Optional.empty());
+        when(auctionRepository.findById(1L)).thenReturn(java.util.Optional.empty());
 
-        Assertions.assertThrows(
+        assertThrows(
                 EntityNotFoundException.class,
                 () -> bidService.getPaginatedBidsByAuction(1L, pageable)
         );
@@ -186,18 +189,18 @@ public class BidServiceTest {
 
     @Test
     void testDeleteBid() {
-        Mockito.when(bidRepository.findById(1L)).thenReturn(java.util.Optional.of(bid));
+        when(bidRepository.findById(1L)).thenReturn(java.util.Optional.of(bid));
 
-        Assertions.assertDoesNotThrow(() -> bidService.deleteBid(1L));
+        assertDoesNotThrow(() -> bidService.deleteBid(1L));
 
-        Mockito.verify(bidRepository).delete(bid);
+        verify(bidRepository).delete(bid);
     }
 
     @Test
     void testDeleteBidNotFound() {
-        Mockito.when(bidRepository.findById(1L)).thenReturn(java.util.Optional.empty());
+        when(bidRepository.findById(1L)).thenReturn(java.util.Optional.empty());
 
-        Assertions.assertThrows(
+        assertThrows(
                 EntityNotFoundException.class,
                 () -> bidService.deleteBid(1L)
         );

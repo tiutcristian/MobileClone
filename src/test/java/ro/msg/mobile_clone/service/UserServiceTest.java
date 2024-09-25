@@ -1,12 +1,10 @@
 package ro.msg.mobile_clone.service;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,6 +19,9 @@ import ro.msg.mobile_clone.repository.UserRepository;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -56,25 +57,25 @@ public class UserServiceTest {
 
     @Test
     void testCreateUser() {
-        Mockito.when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.save(user)).thenReturn(user);
 
         User result = null;
         try {
             result = userService.createUser(user);
         } catch (UniqueFieldsViolationException e) {
-            Assertions.fail("UniqueFieldsViolationException thrown incorrectly.");
+            fail("UniqueFieldsViolationException thrown incorrectly.");
         }
 
-        Assertions.assertEquals(user, result);
+        assertEquals(user, result);
     }
 
     @Test
     void testCreateUserThrowsUniqueFieldsViolationException() throws UniqueFieldsViolationException {
 
-        Mockito.doThrow(new UniqueFieldsViolationException(User.class, Set.of("email")))
+        doThrow(new UniqueFieldsViolationException(User.class, Set.of("email")))
                 .when(userValidator).validateUser(user);
 
-        Assertions.assertThrows(
+        assertThrows(
                 UniqueFieldsViolationException.class,
                 () -> userService.createUser(user)
         );
@@ -82,23 +83,23 @@ public class UserServiceTest {
 
     @Test
     void testGetUserById() {
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
         User result = null;
         try {
             result = userService.getUserById(1L);
         } catch (EntityNotFoundException e) {
-            Assertions.fail("EntityNotFoundException thrown incorrectly.");
+            fail("EntityNotFoundException thrown incorrectly.");
         }
 
-        Assertions.assertEquals(user, result);
+        assertEquals(user, result);
     }
 
     @Test
     void testGetUserByIdThrowsEntityNotFoundException() {
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(
+        assertThrows(
                 EntityNotFoundException.class,
                 () -> userService.getUserById(1L)
         );
@@ -107,37 +108,37 @@ public class UserServiceTest {
     @Test
     void testGetAllPaginated() {
         setupPageable();
-        Mockito.when(userRepository.findAll(pageable))
+        when(userRepository.findAll(pageable))
                 .thenReturn(new PageImpl<>(Collections.singletonList(user)));
 
         Page<User> result = userService.getAllPaginated(pageable);
 
-        Assertions.assertEquals(result.getContent().getFirst(), user);
+        assertEquals(result.getContent().getFirst(), user);
     }
 
     @Test
     void testUpdateUser() {
         setupUser2();
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        Mockito.when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
 
         User result = null;
         try {
             result = userService.updateUser(1L, user2);
         } catch (EntityNotFoundException e) {
-            Assertions.fail("EntityNotFoundException thrown incorrectly.");
+            fail("EntityNotFoundException thrown incorrectly.");
         } catch (UniqueFieldsViolationException e) {
-            Assertions.fail("UniqueFieldsViolationException thrown incorrectly.");
+            fail("UniqueFieldsViolationException thrown incorrectly.");
         }
 
-        Assertions.assertEquals(user2, result);
+        assertEquals(user2, result);
     }
 
     @Test
     void testUpdateUserThrowsEntityNotFoundException() {
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(
+        assertThrows(
                 EntityNotFoundException.class,
                 () -> userService.updateUser(1L, user)
         );
@@ -146,11 +147,11 @@ public class UserServiceTest {
     @Test
     void testUpdateUserThrowsUniqueFieldsViolationException() throws UniqueFieldsViolationException {
         setupUser2();
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        Mockito.doThrow(new UniqueFieldsViolationException(User.class, Set.of("email")))
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        doThrow(new UniqueFieldsViolationException(User.class, Set.of("email")))
                 .when(userValidator).validateUser(user2);
 
-        Assertions.assertThrows(
+        assertThrows(
                 UniqueFieldsViolationException.class,
                 () -> userService.updateUser(1L, user2)
         );
@@ -158,18 +159,18 @@ public class UserServiceTest {
 
     @Test
     void testDeleteUserValid() {
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        Assertions.assertDoesNotThrow(() -> userService.deleteUser(1L));
+        assertDoesNotThrow(() -> userService.deleteUser(1L));
 
-        Mockito.verify(userRepository).delete(user);
+        verify(userRepository).delete(user);
     }
 
     @Test
     void testDeleteUserInvalid() {
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(
+        assertThrows(
                 EntityNotFoundException.class,
                 () -> userService.deleteUser(1L)
         );

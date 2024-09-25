@@ -1,12 +1,10 @@
 package ro.msg.mobile_clone.service;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,6 +20,10 @@ import ro.msg.mobile_clone.repository.ListingRepository;
 import java.time.Year;
 import java.util.Collections;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ListingServiceTest {
@@ -83,32 +85,32 @@ public class ListingServiceTest {
 
     @Test
     void testCreateListing() {
-        Mockito.when(listingRepository.save(listing)).thenReturn(listing);
+        when(listingRepository.save(listing)).thenReturn(listing);
 
         Listing result = listingService.createListing(listing);
 
-        Assertions.assertEquals(listing, result);
+        assertEquals(listing, result);
     }
 
     @Test
     void testGetListingById() {
-        Mockito.when(listingRepository.findById(1L)).thenReturn(Optional.of(listing));
+        when(listingRepository.findById(1L)).thenReturn(Optional.of(listing));
 
         Listing result = null;
         try {
             result = listingService.getListingById(1L);
         } catch (EntityNotFoundException e) {
-            Assertions.fail("EntityNotFoundException thrown when it shouldn't have been.");
+            fail("EntityNotFoundException thrown when it shouldn't have been.");
         }
 
-        Assertions.assertEquals(listing, result);
+        assertEquals(listing, result);
     }
 
     @Test
     void testGetListingByIdThrowsEntityNotFoundException() {
-        Mockito.when(listingRepository.findById(1L)).thenReturn(Optional.empty());
+        when(listingRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(
+        assertThrows(
                 EntityNotFoundException.class,
                 () -> listingService.getListingById(1L)
         );
@@ -117,36 +119,36 @@ public class ListingServiceTest {
     @Test
     void testGetAllPaginated() {
         setupPageable();
-        Mockito.when(listingRepository.findAll(pageable))
+        when(listingRepository.findAll(pageable))
                 .thenReturn(new PageImpl<>(Collections.singletonList(listing)));
 
         Page<Listing> result = listingService.getAllPaginated(pageable);
 
-        Assertions.assertEquals(result.getContent().getFirst(), listing);
+        assertEquals(result.getContent().getFirst(), listing);
     }
 
     @Test
     void testUpdateListing() {
         setupListing2();
-        Mockito.when(listingRepository.findById(1L)).thenReturn(Optional.of(listing));
-        Mockito.when(listingRepository.save(listing)).thenReturn(listing);
+        when(listingRepository.findById(1L)).thenReturn(Optional.of(listing));
+        when(listingRepository.save(listing)).thenReturn(listing);
 
         Listing result = null;
         try {
             result = listingService.updateListing(1L, listing2);
         } catch (EntityNotFoundException e) {
-            Assertions.fail("EntityNotFoundException thrown when it shouldn't have been.");
+            fail("EntityNotFoundException thrown when it shouldn't have been.");
         }
 
-        Assertions.assertEquals(listing2, result);
+        assertEquals(listing2, result);
     }
 
     @Test
     void testUpdateListingThrowsEntityNotFoundException() {
         setupListing2();
-        Mockito.when(listingRepository.findById(1L)).thenReturn(Optional.empty());
+        when(listingRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(
+        assertThrows(
                 EntityNotFoundException.class,
                 () -> listingService.updateListing(1L, listing2)
         );
@@ -154,18 +156,18 @@ public class ListingServiceTest {
 
     @Test
     void testDeleteListingValid() {
-        Mockito.when(listingRepository.findById(1L)).thenReturn(Optional.of(listing));
+        when(listingRepository.findById(1L)).thenReturn(Optional.of(listing));
 
-        Assertions.assertDoesNotThrow(() -> listingService.deleteListing(1L));
+        assertDoesNotThrow(() -> listingService.deleteListing(1L));
 
-        Mockito.verify(listingRepository).delete(listing);
+        verify(listingRepository).delete(listing);
     }
 
     @Test
     void testDeleteListingInvalid() {
-        Mockito.when(listingRepository.findById(1L)).thenReturn(Optional.empty());
+        when(listingRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(
+        assertThrows(
                 EntityNotFoundException.class,
                 () -> listingService.deleteListing(1L)
         );

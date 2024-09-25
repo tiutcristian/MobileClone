@@ -1,6 +1,5 @@
 package ro.msg.mobile_clone.entity.validator;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,6 +9,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ro.msg.mobile_clone.entity.User;
 import ro.msg.mobile_clone.exceptions.UniqueFieldsViolationException;
 import ro.msg.mobile_clone.repository.UserRepository;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
+
 
 @ExtendWith(MockitoExtension.class)
 public class UserValidatorTest {
@@ -45,7 +48,7 @@ public class UserValidatorTest {
         try {
             userValidator.validateUser(user);
         } catch (UniqueFieldsViolationException e) {
-            Assertions.fail("Exception thrown incorrectly");
+            fail("Exception thrown incorrectly");
         }
     }
 
@@ -53,7 +56,7 @@ public class UserValidatorTest {
     public void testValidateUserWithExistingEmail() {
         setup(user2, null, true);
 
-        Assertions.assertThrows(
+        assertThrows(
                 UniqueFieldsViolationException.class,
                 () -> userValidator.validateUser(user)
         );
@@ -63,7 +66,7 @@ public class UserValidatorTest {
     public void testValidateUserWithExistingPhone() {
         setup(null, user2, true);
 
-        Assertions.assertThrows(
+        assertThrows(
                 UniqueFieldsViolationException.class,
                 () -> userValidator.validateUser(user)
         );
@@ -76,7 +79,7 @@ public class UserValidatorTest {
         try {
             userValidator.validateUser(user);
         } catch (UniqueFieldsViolationException e) {
-            Assertions.fail("Exception thrown incorrectly");
+            fail("Exception thrown incorrectly");
         }
     }
 
@@ -87,7 +90,7 @@ public class UserValidatorTest {
         try {
             userValidator.validateUser(user);
         } catch (UniqueFieldsViolationException e) {
-            Assertions.fail("Exception thrown incorrectly");
+            fail("Exception thrown incorrectly");
         }
     }
 }
