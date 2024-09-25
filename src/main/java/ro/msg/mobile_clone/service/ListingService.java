@@ -1,10 +1,7 @@
 package ro.msg.mobile_clone.service;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -131,7 +128,7 @@ public class ListingService {
                 Object fieldValue = entry.getValue();
 
                 if (fieldValue != null) {
-                    Predicate predicate = cb.equal(root.get(fieldName), fieldValue);
+                    Predicate predicate = cb.equal(root.get(fieldName).as(String.class), fieldValue);
                     predicates.add(predicate);
                     log.debug("Added predicate for field {} with value {}", fieldName, fieldValue);
                 }
