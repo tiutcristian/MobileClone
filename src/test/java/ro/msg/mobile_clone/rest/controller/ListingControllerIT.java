@@ -1,13 +1,13 @@
 package ro.msg.mobile_clone.rest.controller;
 
 import jakarta.annotation.PostConstruct;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -24,6 +24,14 @@ public class ListingControllerIT {
     MockMvc mockMvc;
 
     private static final String BASE_URL = "/api/v1/listings";
+    private static final String INSERT_USER_QUERY = "INSERT INTO users (id, first_name, last_name, email, phone) " +
+            "VALUES (1, 'Cristian', 'Tiut', 'tiutcristian@gmail.com', '0721644423')";
+    private static final String INSERT_LISTING_QUERY1 = "INSERT INTO listings (id, user_id, title, price, make, model, description, manufacture_year, mileage, engine_size, horsepower, transmission, fuel_type) " +
+            "VALUES (1, 1, 'Title', 2000, 'Toyota', 'Auris', 'Some description here', 2000, 2000000, 2000, 100, 'MANUAL', 'PETROL')";
+    private static final String INSERT_LISTING_QUERY2 = "INSERT INTO listings (id, user_id, title, price, make, model, description, manufacture_year, mileage, engine_size, horsepower, transmission, fuel_type) " +
+            "VALUES (2, 1, 'Title', 2000, 'Toyota', 'Auris', 'Some description here', 2000, 2000000, 2000, 100, 'MANUAL', 'PETROL')";
+    private static final String INSERT_LISTING_QUERY3 = "INSERT INTO listings (id, user_id, title, price, make, model, description, manufacture_year, mileage, engine_size, horsepower, transmission, fuel_type) " +
+            "VALUES (3, 1, 'Title', 2000, 'Toyota', 'Auris', 'Some description here', 2000, 2000000, 2000, 100, 'MANUAL', 'PETROL')";
 
     @Autowired
     private WebApplicationContext context;
@@ -35,22 +43,8 @@ public class ListingControllerIT {
                 .build();
     }
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        // create a user
-        this.mockMvc.perform(post("/api/v1/users/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        {\
-                            "firstName": "Cristian",\
-                            "lastName": "Tiut",\
-                            "email": "tiutcristian@gmail.com",\
-                            "phone": "0721644423"
-                        }""")
-        );
-    }
-
     @Test
+    @Sql(statements = INSERT_USER_QUERY, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testCreateListing() throws Exception {
         this.mockMvc.perform(post(BASE_URL + "/create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -82,7 +76,7 @@ public class ListingControllerIT {
                         .content("""
 
                                 {\
-                            "userId": 2,\
+                            "userId": 1,\
                             "title": "Title",\
                             "price": 2000,\
                             "make": "Toyota",\
@@ -100,6 +94,7 @@ public class ListingControllerIT {
     }
 
     @Test
+    @Sql(statements = INSERT_USER_QUERY, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testCreateListingWithInvalidTransmission() throws Exception {
         this.mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,6 +118,7 @@ public class ListingControllerIT {
     }
 
     @Test
+    @Sql(statements = INSERT_USER_QUERY, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testCreateListingWithInvalidPrice() throws Exception {
         this.mockMvc.perform(post(BASE_URL + "/create")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -146,28 +142,26 @@ public class ListingControllerIT {
     }
 
     @Test
+    @Sql(statements = {INSERT_USER_QUERY, INSERT_LISTING_QUERY1, INSERT_LISTING_QUERY2, INSERT_LISTING_QUERY3},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testGetAllListings() throws Exception {
-        for (int i = 0; i < 6; i++) {
-            testCreateListing();
-        }
         this.mockMvc.perform(get(BASE_URL)
                         .param("page", "0")
-                        .param("size", "5")
+                        .param("size", "2")
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content[0].id").value(1))
                 .andExpect(jsonPath("$.content[1].id").value(2))
-                .andExpect(jsonPath("$.content[2].id").value(3))
-                .andExpect(jsonPath("$.content[3].id").value(4))
-                .andExpect(jsonPath("$.content[4].id").value(5))
-                .andExpect(jsonPath("$.content[5]").doesNotExist());
+                .andExpect(jsonPath("$.content[2]").doesNotExist())
+                .andExpect(jsonPath("$.totalPages").value(2))
+                .andExpect(jsonPath("$.totalElements").value(3));
     }
 
     @Test
+    @Sql(statements = {INSERT_USER_QUERY, INSERT_LISTING_QUERY1}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testGetListingById() throws Exception {
-        testCreateListing();
         this.mockMvc.perform(get(BASE_URL + "/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -181,8 +175,8 @@ public class ListingControllerIT {
     }
 
     @Test
+    @Sql(statements = {INSERT_USER_QUERY, INSERT_LISTING_QUERY1}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testUpdateListing() throws Exception {
-        testCreateListing();
         this.mockMvc.perform(put(BASE_URL + "/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -207,7 +201,7 @@ public class ListingControllerIT {
 
     @Test
     public void testUpdateListingWithInvalidId() throws Exception {
-        this.mockMvc.perform(put(BASE_URL + "/2")
+        this.mockMvc.perform(put(BASE_URL + "/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {\
@@ -230,8 +224,8 @@ public class ListingControllerIT {
     }
 
     @Test
+    @Sql(statements = {INSERT_USER_QUERY, INSERT_LISTING_QUERY1}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testDeleteListing() throws Exception {
-        testCreateListing();
         this.mockMvc.perform(delete(BASE_URL + "/1"))
                 .andExpect(status().isOk());
     }
@@ -243,10 +237,9 @@ public class ListingControllerIT {
     }
 
     @Test
+    @Sql(statements = {INSERT_USER_QUERY, INSERT_LISTING_QUERY1, INSERT_LISTING_QUERY2, INSERT_LISTING_QUERY3},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testSearchListings() throws Exception {
-        testCreateListing();
-        testCreateListing();
-        testCreateListing();
         this.mockMvc.perform(get(BASE_URL + "/search")
                 .param("make", "Toyota")
                 .param("model", "Auris")

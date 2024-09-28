@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -26,6 +27,12 @@ public class UserControllerIT {
     private MockMvc mockMvc;
 
     private static final String BASE_URL = "/api/v1/users";
+    private static final String INSERT_USER_QUERY1 = "INSERT INTO users (first_name, last_name, email, phone)" +
+            " VALUES ('Cristian', 'Tiut', 'tiutcristian@gmail.com', '0721644423')";
+    private static final String INSERT_USER_QUERY2 = "INSERT INTO users (first_name, last_name, email, phone)" +
+            " VALUES ('Alice', 'Smith', 'alice.smith@example.com', '0731567890')";
+    private static final String INSERT_USER_QUERY3 = "INSERT INTO users (first_name, last_name, email, phone)" +
+            " VALUES ('John', 'Doe', 'john.doe@example.com', '0729876543')";
 
     @Autowired
     private WebApplicationContext context;
@@ -89,8 +96,8 @@ public class UserControllerIT {
     }
 
     @Test
+    @Sql(statements = INSERT_USER_QUERY1, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testCreateUserRepeatedPhone() throws Exception {
-        createUser("Cristian", "Tiut", "cv@sth.com", "0721644423");
         mockMvc.perform(post(BASE_URL + "/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -105,45 +112,25 @@ public class UserControllerIT {
     }
 
     @Test
+    @Sql(statements = {INSERT_USER_QUERY1, INSERT_USER_QUERY2, INSERT_USER_QUERY3},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testGetAllUsers() throws Exception {
-
-        createUser("Cristian", "Tiut", "tiutcristian@gmail.com", "0721644423");
-        createUser("Alice", "Smith", "alice.smith@example.com", "0731567890");
-        createUser("John", "Doe", "john.doe@example.com", "0729876543");
-        createUser("Emily", "Johnson", "emily.johnson@example.com", "0741234567");
-        createUser("Michael", "Brown", "michael.brown@example.com", "0750987654");
-        createUser("Sophia", "Davis", "sophia.davis@example.com", "0763456789");
-
         this.mockMvc.perform(get(BASE_URL)
                         .param("page", "0")
-                        .param("size", "5"))
+                        .param("size", "2"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content").isArray())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].firstName").value("Cristian"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content[1].firstName").value("Alice"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[2].firstName").value("John"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[3].firstName").value("Emily"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[4].firstName").value("Michael"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content[5]").doesNotExist());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[2]").doesNotExist());
     }
-
+// =================== aici am ajuns
     @Test
+    @Sql(statements = {INSERT_USER_QUERY2, INSERT_USER_QUERY3, INSERT_USER_QUERY1},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testGetUserById() throws Exception {
-        // creating some users
-        createUser("Alice", "Smith", "alice.smith@example.com", "0731567890");
-        createUser("John", "Doe", "john.doe@example.com", "0729876543");
-
-        // creating the user to be retrieved
-        createUser("Cristian", "Tiut", "tiutcristian@gmail.com", "0721644423");
-        String location = BASE_URL + "/3"; // id of the user to be retrieved is 3
-
-        // creating some more users
-        createUser("Emily", "Johnson", "emily.johnson@example.com", "0741234567");
-        createUser("Michael", "Brown", "michael.brown@example.com", "0750987654");
-        createUser("Sophia", "Davis", "sophia.davis@example.com", "0763456789");
-
-        this.mockMvc.perform(get(location))
+        this.mockMvc.perform(get(BASE_URL + "/3"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.phone").value("0721644423"));
@@ -151,11 +138,9 @@ public class UserControllerIT {
     }
 
     @Test
+    @Sql(statements = {INSERT_USER_QUERY1, INSERT_USER_QUERY2},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testUpdateUser() throws Exception {
-        // creating some users
-        createUser("Cristian", "Tiut", "tiutcristian@gmail.com", "0721644423");
-        createUser("Alice", "Smith", "alice.smith@example.com", "0731567890");
-
         // updating the user with id 2
         MvcResult result = this.mockMvc.perform(put(BASE_URL + "/2")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -186,11 +171,9 @@ public class UserControllerIT {
     }
 
     @Test
+    @Sql(statements = {INSERT_USER_QUERY1, INSERT_USER_QUERY2},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testUpdateUserMissingEmail() throws Exception {
-        // creating some users
-        createUser("Cristian", "Tiut", "tiutcristian@gmail.com", "0721644423");
-        createUser("Alice", "Smith", "alice.smith@example.com", "0731567890");
-
         // updating the user with id 2
         this.mockMvc.perform(put(BASE_URL + "/2")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -205,11 +188,9 @@ public class UserControllerIT {
     }
 
     @Test
+    @Sql(statements = {INSERT_USER_QUERY1, INSERT_USER_QUERY2},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testUpdateUserRepeatedPhone() throws Exception {
-        // creating some users
-        createUser("Cristian", "Tiut", "tiutcristian@gmail.com", "0721644423");
-        createUser("Alice", "Smith", "alice.smith@example.com", "0731567890");
-
         // updating the user with id 2
         this.mockMvc.perform(put(BASE_URL + "/2")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -226,11 +207,9 @@ public class UserControllerIT {
     }
 
     @Test
+    @Sql(statements = {INSERT_USER_QUERY1, INSERT_USER_QUERY2},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testDeleteUser() throws Exception {
-        // creating some users
-        createUser("Cristian", "Tiut", "tiutcristian@gmail.com", "0721644423");
-        createUser("Alice", "Smith", "alice.smith@example.com", "0731567890");
-
         // deleting the user with id 2
         this.mockMvc.perform(delete(BASE_URL + "/2"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -241,11 +220,9 @@ public class UserControllerIT {
     }
 
     @Test
+    @Sql(statements = {INSERT_USER_QUERY1, INSERT_USER_QUERY2},
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testDeleteUserNotFound() throws Exception {
-        // creating some users
-        createUser("Cristian", "Tiut", "tiutcristian@gmail.com", "0721644423");
-        createUser("Alice", "Smith", "alice.smith@example.com", "0731567890");
-
         // trying to delete a non-existent user
         this.mockMvc.perform(delete(BASE_URL + "/3"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());

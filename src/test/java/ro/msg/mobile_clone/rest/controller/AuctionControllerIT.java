@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -26,6 +27,12 @@ public class AuctionControllerIT {
     private MockMvc mockMvc;
 
     private static final String BASE_URL = "/api/v1/auctions";
+    private static final String INSERT_USER_QUERY = "INSERT INTO users (id, first_name, last_name, email, phone) " +
+            "VALUES (1, 'Cristian', 'Tiut', 'tiutcristian@gmail.com', '0721644423')";
+    private static final String INSERT_LISTING_QUERY = "INSERT INTO listings (id, user_id, title, price, make, model, description, manufacture_year, mileage, engine_size, horsepower, transmission, fuel_type) " +
+            "VALUES (1, 1, 'Title', 2000, 'Toyota', 'Auris', 'Some description here', '2000', 2000000, 2000, 100, 'MANUAL', 'PETROL')";
+    private static final String INSERT_AUCTION_QUERY = "INSERT INTO auctions (id, listing_id, ending_timestamp, winner_id, active) " +
+            "VALUES (1, 1, '2021-10-10 12:00:00', NULL, true)";
 
     @Autowired
     private WebApplicationContext context;
@@ -37,45 +44,10 @@ public class AuctionControllerIT {
                 .build();
     }
 
-    private void createUserAndListing() throws Exception {
-        // create user
-        mockMvc.perform(post("/api/v1/users/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                                {\
-                                "firstName": "Cristian",\
-                                "lastName": "Tiut",\
-                                "email": "tiutcristian@gmail.com",\
-                                "phone": "0721644423"
-                                }""")
-        );
-
-        // create listing
-        mockMvc.perform(post("/api/v1/listings/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        {\
-                            "userId": 1,\
-                            "title": "Title",\
-                            "price": 2000,\
-                            "make": "Toyota",\
-                            "model": "Auris",\
-                            "description": "Some description here",\
-                            "year": 2000,\
-                            "mileage": 2000000,\
-                            "engineSize": 2000,\
-                            "horsepower": 100,\
-                            "transmission": "MANUAL",\
-                            "fuelType": "PETROL"
-                        }""")
-        );
-    }
-
     // create auction
     @Test
+    @Sql(statements = {INSERT_USER_QUERY, INSERT_LISTING_QUERY}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testCreateAuction() throws Exception {
-        createUserAndListing();
-
         // create json object
         JSONObject jsonObject = new JSONObject();
         String deadline = Instant.now()
@@ -104,7 +76,6 @@ public class AuctionControllerIT {
 
     @Test
     public void testCreateAuctionInvalidListingId() throws Exception {
-
         // create json object
         JSONObject jsonObject = new JSONObject();
         String deadline = Instant.now()
@@ -123,9 +94,8 @@ public class AuctionControllerIT {
     }
 
     @Test
+    @Sql(statements = {INSERT_USER_QUERY, INSERT_LISTING_QUERY}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testCreateAuctionInvalidEndingTimestamp() throws Exception {
-        createUserAndListing();
-
         // create json object
         JSONObject jsonObject = new JSONObject();
         String deadline = Instant.now()
@@ -145,25 +115,8 @@ public class AuctionControllerIT {
 
     // get all auctions
     @Test
+    @Sql(statements = {INSERT_USER_QUERY, INSERT_LISTING_QUERY, INSERT_AUCTION_QUERY}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testGetAllAuctions() throws Exception {
-        createUserAndListing();
-
-        // create json object
-        JSONObject jsonObject = new JSONObject();
-        String deadline = Instant.now()
-                .plus(3, java.time.temporal.ChronoUnit.DAYS)
-                .toString()
-                .substring(0, 19);
-        jsonObject.put("listingId", 1);
-        jsonObject.put("endingTimestamp", deadline);
-
-        // create auction
-        this.mockMvc.perform(post(BASE_URL + "/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonObject.toString())
-                )
-                .andExpect(status().isCreated());
-
         // get all auctions
         this.mockMvc.perform(get(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -172,32 +125,15 @@ public class AuctionControllerIT {
                 .andExpect(jsonPath("$.content[0].id").value(1))
                 .andExpect(jsonPath("$.content[0].listingId").value(1))
                 .andExpect(jsonPath("$.content[0].endingTimestamp")
-                        .value(deadline + ".000+00:00"))
+                        .value("2021-10-10T09:00:00.000+00:00"))
                 .andExpect(jsonPath("$.content[0].winnerId").isEmpty())
                 .andExpect(jsonPath("$.content[0].active").value(true));
     }
 
     // get auction by id
     @Test
+    @Sql(statements = {INSERT_USER_QUERY, INSERT_LISTING_QUERY, INSERT_AUCTION_QUERY}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testGetAuctionById() throws Exception {
-        createUserAndListing();
-
-        // create json object
-        JSONObject jsonObject = new JSONObject();
-        String deadline = Instant.now()
-                .plus(3, java.time.temporal.ChronoUnit.DAYS)
-                .toString()
-                .substring(0, 19);
-        jsonObject.put("listingId", 1);
-        jsonObject.put("endingTimestamp", deadline);
-
-        // create auction
-        this.mockMvc.perform(post(BASE_URL + "/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonObject.toString())
-                )
-                .andExpect(status().isCreated());
-
         // get auction by id
         this.mockMvc.perform(get(BASE_URL + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -206,41 +142,22 @@ public class AuctionControllerIT {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.listingId").value(1))
                 .andExpect(jsonPath("$.endingTimestamp")
-                        .value(deadline + ".000+00:00"))
+                        .value("2021-10-10T09:00:00.000+00:00"))
                 .andExpect(jsonPath("$.winnerId").isEmpty())
                 .andExpect(jsonPath("$.active").value(true));
     }
 
     @Test
     public void testGetAuctionByIdInvalidId() throws Exception {
-        // get auction by id
         this.mockMvc.perform(get(BASE_URL + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isNotFound());
     }
 
-    // delete auction by id
     @Test
+    @Sql(statements = {INSERT_USER_QUERY, INSERT_LISTING_QUERY, INSERT_AUCTION_QUERY}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void testDeleteAuctionById() throws Exception {
-        createUserAndListing();
-
-        // create json object
-        JSONObject jsonObject = new JSONObject();
-        String deadline = Instant.now()
-                .plus(3, java.time.temporal.ChronoUnit.DAYS)
-                .toString()
-                .substring(0, 19);
-        jsonObject.put("listingId", 1);
-        jsonObject.put("endingTimestamp", deadline);
-
-        // create auction
-        this.mockMvc.perform(post(BASE_URL + "/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonObject.toString())
-                )
-                .andExpect(status().isCreated());
-
         // delete auction by id
         this.mockMvc.perform(delete(BASE_URL + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
