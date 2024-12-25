@@ -1,13 +1,4 @@
-<center>
-    <img 
-        src="assets/images/mobile-logo.jpeg"
-        alt="Mobile Clone API"
-        width="200"
-    >
-    <br><br>
-    <h1>Mobile Clone API</h1>
-</center>
-
+# Mobile Clone API
 
 This project is a clone of the [**mobile.de**](https://www.mobile.de/) backend, built using **Spring Boot**. The API simulates typical operations for managing vehicle listings such as creating, updating, deleting, and searching for cars, as well as operation for auctions and for bidding on them.
 
