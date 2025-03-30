@@ -27,6 +27,9 @@ public class Listing {
     @NotNull(message = "User is mandatory")
     private User user;
 
+    @NotBlank(message = "Image URL is mandatory")
+    private String imageUrl;
+
     @NotBlank(message = "Title is mandatory")
     private String title;
 

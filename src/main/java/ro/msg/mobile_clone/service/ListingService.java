@@ -63,6 +63,9 @@ public class ListingService {
         listing.setUser(l.getUser());
         log.debug("User updated to: {}", listing.getUser());
 
+        listing.setImageUrl(l.getImageUrl());
+        log.debug("Image URL updated to: {}", listing.getImageUrl());
+
         listing.setTitle(l.getTitle());
         log.debug("Title updated to: {}", listing.getTitle());
 

@@ -29,8 +29,8 @@ public class AuctionControllerIT {
     private static final String BASE_URL = "/api/v1/auctions";
     private static final String INSERT_USER_QUERY = "INSERT INTO users (id, first_name, last_name, email, phone) " +
             "VALUES (1, 'Cristian', 'Tiut', 'tiutcristian@gmail.com', '0721644423')";
-    private static final String INSERT_LISTING_QUERY = "INSERT INTO listings (id, user_id, title, price, make, model, description, manufacture_year, mileage, engine_size, horsepower, transmission, fuel_type) " +
-            "VALUES (1, 1, 'Title', 2000, 'Toyota', 'Auris', 'Some description here', '2000', 2000000, 2000, 100, 'MANUAL', 'PETROL')";
+    private static final String INSERT_LISTING_QUERY = "INSERT INTO listings (id, user_id, image_url, title, price, make, model, description, manufacture_year, mileage, engine_size, horsepower, transmission, fuel_type) " +
+            "VALUES (1, 1, 'https://www.shutterstock.com/image-vector/car-logo-icon-emblem-design-600nw-473088025.jpg', 'Title', 2000, 'Toyota', 'Auris', 'Some description here', '2000', 2000000, 2000, 100, 'MANUAL', 'PETROL')";
     private static final String INSERT_AUCTION_QUERY = "INSERT INTO auctions (id, listing_id, ending_timestamp, winner_id, active) " +
             "VALUES (1, 1, '2021-10-10 12:00:00', NULL, true)";
 

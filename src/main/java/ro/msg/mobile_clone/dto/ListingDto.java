@@ -9,6 +9,7 @@ import java.time.Year;
 public record ListingDto (
     Long id,
     Long userId,
+    String imageUrl,
     String title,
     double price,
     String make,

@@ -32,6 +32,7 @@ public class ListingMapperTest {
         listingDto = new ListingDto(
                 1L,
                 2L,
+                "https://www.shutterstock.com/image-vector/car-logo-icon-emblem-design-600nw-473088025.jpg",
                 "title",
                 2000,
                 "Make",
