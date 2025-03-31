@@ -131,7 +131,12 @@ public class ListingService {
                 Object fieldValue = entry.getValue();
 
                 if (fieldValue != null) {
-                    Predicate predicate = cb.equal(root.get(fieldName).as(String.class), fieldValue);
+                    Predicate predicate;
+                    if (fieldValue instanceof String) {
+                        predicate = cb.like(cb.lower(root.get(fieldName).as(String.class)), "%" + fieldValue.toString().toLowerCase() + "%");
+                    } else {
+                        predicate = cb.equal(root.get(fieldName).as(String.class), fieldValue);
+                    }
                     predicates.add(predicate);
                     log.debug("Added predicate for field {} with value {}", fieldName, fieldValue);
                 }
