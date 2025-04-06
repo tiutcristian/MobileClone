@@ -1,13 +1,12 @@
 -- INSERT USERS --
-INSERT INTO users (`id`, `first_name`, `last_name`, `email`, `phone`)
-VALUES (1,'Cristian','Tiut','tiutcristian@gmail.com','0721644423');
+INSERT INTO users (`first_name`, `last_name`, `email`, `phone`)
+VALUES ('Cristian','Tiut','tiutcristian@gmail.com','0721644423');
 
 
 
 
 -- INSERT LISTINGS --
 INSERT INTO listings (
-    `id`,
     `user_id`,
     `image_url`,
     `title`,
@@ -22,7 +21,6 @@ INSERT INTO listings (
     `transmission`,
     `fuel_type`
 ) VALUES (
-    1,
     1,
     '/images/corolla.png',
     'Toyota Corolla 2020 for sale',
@@ -39,7 +37,6 @@ INSERT INTO listings (
 );
 
 INSERT INTO listings (
-    `id`,
     `user_id`,
     `image_url`,
     `title`,
@@ -54,7 +51,6 @@ INSERT INTO listings (
     `transmission`,
     `fuel_type`
 ) VALUES (
-    2,
     1,
     '/images/yaris.png',
     'Toyota Yaris 2019 for sale',
@@ -71,7 +67,6 @@ INSERT INTO listings (
 );
 
 INSERT INTO listings (
-    `id`,
     `user_id`,
     `image_url`,
     `title`,
@@ -86,7 +81,6 @@ INSERT INTO listings (
     `transmission`,
     `fuel_type`
 ) VALUES (
-    3,
     1,
     '/images/camry.png',
     'Toyota Camry 2018 for sale',
@@ -103,7 +97,6 @@ INSERT INTO listings (
 );
 
 INSERT INTO listings (
-    `id`,
     `user_id`,
     `image_url`,
     `title`,
@@ -118,7 +111,6 @@ INSERT INTO listings (
     `transmission`,
     `fuel_type`
 ) VALUES (
-    4,
     1,
     '/images/rav4.png',
     'Toyota RAV4 2017 for sale',
