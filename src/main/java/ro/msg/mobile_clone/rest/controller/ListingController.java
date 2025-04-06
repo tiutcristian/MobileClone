@@ -21,7 +21,7 @@ import java.net.URI;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://192.168.254.225:3000", "http://localhost:3000"})
 @RequestMapping("/api/v1/listings")
 @AllArgsConstructor
 @Slf4j
