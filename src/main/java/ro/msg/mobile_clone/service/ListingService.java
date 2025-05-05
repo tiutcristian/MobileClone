@@ -127,7 +127,7 @@ public class ListingService {
 
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             String fieldName = entry.getKey();
-            if(!fieldName.equals("page") && !fieldName.equals("size")) {
+            if(!fieldName.equals("page") && !fieldName.equals("size") && !fieldName.equals("userId")) {
                 Object fieldValue = entry.getValue();
 
                 if (fieldValue != null) {
@@ -140,6 +140,11 @@ public class ListingService {
                     predicates.add(predicate);
                     log.debug("Added predicate for field {} with value {}", fieldName, fieldValue);
                 }
+            } else if (fieldName.equals("userId")) {
+                Long userId = Long.valueOf(entry.getValue().toString());
+                Predicate predicate = cb.equal(root.get("user").get("id"), userId);
+                predicates.add(predicate);
+                log.debug("Added predicate for userId {}", userId);
             }
         }
 
