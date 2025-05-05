@@ -35,7 +35,7 @@ public class UserController {
                 .getAllPaginated(pageable)
                 .map(UserMapper.INSTANCE::mapUserToDto);
 
-        log.info("Retrieved page {} of size {} with {} elements",
+        log.info("Retrieved page {} of size {} with {} users",
                 resultPage.getNumber(), resultPage.getSize(), resultPage.getNumberOfElements());
 
         return ResponseEntity.ok(resultPage);
