@@ -169,6 +169,6 @@ class AuctionServiceTest {
 
         Page<Auction> result = auctionService.getAllPaginated(pageable);
 
-        assertEquals(result.getContent().getFirst(), auction);
+        assertEquals(result.getContent().get(0), auction);
     }
 }

@@ -113,7 +113,7 @@ public class UserServiceTest {
 
         Page<User> result = userService.getAllPaginated(pageable);
 
-        assertEquals(result.getContent().getFirst(), user);
+        assertEquals(result.getContent().get(0), user);
     }
 
     @Test

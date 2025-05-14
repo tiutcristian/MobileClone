@@ -173,7 +173,7 @@ public class BidServiceTest {
             fail("EntityNotFoundException thrown incorrectly.");
         }
 
-        assertEquals(result.getContent().getFirst(), bid);
+        assertEquals(result.getContent().get(0), bid);
     }
 
     @Test

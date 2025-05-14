@@ -124,7 +124,7 @@ public class ListingServiceTest {
 
         Page<Listing> result = listingService.getAllPaginated(pageable);
 
-        assertEquals(result.getContent().getFirst(), listing);
+        assertEquals(result.getContent().get(0), listing);
     }
 
     @Test
