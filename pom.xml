@@ -62,7 +62,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
+            <version>23.0.0</version>
             <scope>compile</scope>
         </dependency>
 		<dependency>
@@ -166,6 +166,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>mobile-clone-0.0.1-SNAPSHOT</finalName>
 	</build>
 
 </project>
