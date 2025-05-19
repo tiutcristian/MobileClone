@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin(origins = {"https://mobile_frontend.railway.internal", "http://localhost:3000"})
+@CrossOrigin(origins = {"https://mobilefrontend-production.up.railway.app", "http://localhost:3000"})
 @RequestMapping("/api/v1/heartbeat")
 @AllArgsConstructor
 public class HeartbeatController {

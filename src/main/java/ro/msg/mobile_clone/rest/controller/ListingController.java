@@ -21,7 +21,7 @@ import java.net.URI;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = {"https://mobile_frontend.railway.internal", "http://localhost:3000"})
+@CrossOrigin(origins = {"https://mobilefrontend-production.up.railway.app", "http://localhost:3000"})
 @RequestMapping("/api/v1/listings")
 @AllArgsConstructor
 @Slf4j

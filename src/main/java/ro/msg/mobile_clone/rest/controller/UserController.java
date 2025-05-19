@@ -19,7 +19,7 @@ import ro.msg.mobile_clone.service.UserService;
 import java.net.URI;
 
 @RestController
-@CrossOrigin(origins = {"https://mobile_frontend.railway.internal", "http://localhost:3000"})
+@CrossOrigin(origins = {"https://mobilefrontend-production.up.railway.app", "http://localhost:3000"})
 @RequestMapping("/api/v1/users")
 @AllArgsConstructor
 @Slf4j
