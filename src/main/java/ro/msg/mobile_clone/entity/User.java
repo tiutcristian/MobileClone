@@ -35,6 +35,8 @@ public class User {
     @Convert(converter = LowercaseConverter.class)
     private String email;
 
+    private String password;
+
     @Pattern(regexp = "^\\+?[0-9]{10,14}$", message = "Invalid phone number")
     @NotBlank(message = "Phone is mandatory")
     private String phone;
