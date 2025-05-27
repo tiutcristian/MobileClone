@@ -38,8 +38,6 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Updated configuration for Spring Security 6.x
         http
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF
-                .cors(AbstractHttpConfigurer::disable) // Disable CORS (or configure if needed)
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.authenticationEntryPoint(unauthorizedHandler)
                 )
