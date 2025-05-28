@@ -1,14 +1,18 @@
 package ro.msg.mobile_clone.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import ro.msg.mobile_clone.entity.validator.UserValidator;
 import ro.msg.mobile_clone.repository.UserRepository;
 import ro.msg.mobile_clone.security.JwtUtil;
 import ro.msg.mobile_clone.entity.User;
+
+import static org.springframework.web.servlet.function.ServerResponse.ok;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -33,11 +37,9 @@ public class AuthController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return jwtUtils.generateToken(userDetails.getUsername());
     }
+
     @PostMapping("/signup")
-    public String registerUser(@RequestBody User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            return "Error: Username is already taken!";
-        }
+    public ResponseEntity<String> registerUser(@RequestBody User user) {
         // Create new user's account
         User newUser = new User();
         newUser.setFirstName(user.getFirstName());
@@ -45,7 +47,14 @@ public class AuthController {
         newUser.setPhone(user.getPhone());
         newUser.setEmail(user.getEmail());
         newUser.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(newUser);
-        return "User registered successfully!";
+
+        UserValidator userValidator = new UserValidator(userRepository);
+        try {
+            userValidator.validateUser(newUser);
+            userRepository.save(newUser);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+        return ResponseEntity.ok("User registered successfully!");
     }
 }
