@@ -12,6 +12,7 @@ import ro.msg.mobile_clone.entity.User;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@CrossOrigin(origins = {"https://mobilefrontend-production.up.railway.app", "http://localhost:3000"})
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
