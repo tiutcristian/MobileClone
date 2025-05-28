@@ -88,4 +88,15 @@ public class UserService {
         log.debug("Deleting user...");
         userRepository.delete(user);
     }
+
+    public User findByEmail(String email) {
+        log.debug("Searching user by email: {}", email);
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            log.warn("No user found with email: {}", email);
+        } else {
+            log.debug("User found: {}", user);
+        }
+        return user;
+    }
 }

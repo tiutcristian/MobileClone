@@ -114,4 +114,19 @@ public class UserController {
 
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<UserDto> searchUserByEmail(@RequestParam String email) {
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            log.warn("User with email {} not found", email);
+            return ResponseEntity.notFound().build();
+        }
+
+        UserDto userDto = UserMapper.INSTANCE.mapUserToDto(user);
+        log.info("User with email {} found: {}", email, userDto);
+
+        return ResponseEntity.ok(userDto);
+    }
+
 }
