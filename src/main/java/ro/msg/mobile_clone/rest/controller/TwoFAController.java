@@ -8,6 +8,7 @@ import ro.msg.mobile_clone.security.JwtUtil;
 import ro.msg.mobile_clone.security.TOTPUtil;
 import ro.msg.mobile_clone.service.UserService;
 
+import java.util.Arrays;
 import java.util.Map;
 
 @RestController
@@ -43,7 +44,7 @@ public class TwoFAController {
         int code = Integer.parseInt(body.get("code"));
 
 
-        String secret = userService.getSecretTwoFA(username);
+        String secret = Arrays.toString(userService.getSecretByEmail(username));
         boolean isValid = totpUtil.verifyCode(secret, code);
 
         if (isValid) {

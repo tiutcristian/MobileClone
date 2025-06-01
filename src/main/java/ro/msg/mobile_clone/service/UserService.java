@@ -100,7 +100,7 @@ public class UserService {
         return user;
     }
 
-    public String getSecretTwoFA(String email) {
+    public char[] getSecretByEmail(String email) {
         log.debug("Retrieving 2FA secret for user with email: {}", email);
         User user = userRepository.findByEmail(email);
         if (user == null) {
@@ -109,7 +109,7 @@ public class UserService {
         }
         String secret = user.getSecret2FA();
         log.debug("2FA secret retrieved: {}", secret);
-        return secret;
+        return secret != null ? secret.toCharArray() : null;
     }
 
     public void update2FASecret(String username, String secret) {
