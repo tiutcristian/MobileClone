@@ -52,6 +52,7 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/v1/heartbeat").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/listings/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/v1/listings/search/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/v1/twofa/verify").permitAll()
                                 .anyRequest().authenticated()
                 );
         // Add the JWT Token filter before the UsernamePasswordAuthenticationFilter

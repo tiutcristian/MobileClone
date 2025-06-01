@@ -99,4 +99,40 @@ public class UserService {
         }
         return user;
     }
+
+    public String getSecretTwoFA(String email) {
+        log.debug("Retrieving 2FA secret for user with email: {}", email);
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            log.warn("No user found with email: {}", email);
+            return null;
+        }
+        String secret = user.getSecret2FA();
+        log.debug("2FA secret retrieved: {}", secret);
+        return secret;
+    }
+
+    public void update2FASecret(String username, String secret) {
+        log.debug("Updating 2FA secret for user: {}", username);
+        User user = userRepository.findByEmail(username);
+        if (user == null) {
+            log.warn("No user found with email: {}", username);
+            return;
+        }
+        user.setSecret2FA(secret);
+        log.debug("2FA secret updated to: {}", secret);
+        userRepository.save(user);
+    }
+
+    public void enableTwoFA(String username) {
+    log.debug("Enabling 2FA for user: {}", username);
+        User user = userRepository.findByEmail(username);
+        if (user == null) {
+            log.warn("No user found with email: {}", username);
+            return;
+        }
+        user.set2FAEnabled(true);
+        log.debug("2FA enabled for user: {}", username);
+        userRepository.save(user);
+    }
 }

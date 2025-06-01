@@ -34,6 +34,16 @@ public class AuthController {
                         user.getPassword()
                 )
         );
+
+        User foundUser = userRepository.findByEmail(user.getEmail());
+        if (foundUser == null) {
+            throw new BadCredentialsException("Invalid email or password");
+        }
+
+        if (foundUser.is2FAEnabled()) {
+            return "2FA_REQUIRED";
+        }
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return jwtUtils.generateToken(userDetails.getUsername());
     }
